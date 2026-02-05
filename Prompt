@@ -1,0 +1,192 @@
+ROLE:
+You are Claude (Opus/Sonnet), acting as a senior Laravel architect + UI/UX designer.
+Build a production‑ready Laravel website + Blade-based admin panel for a shopping mall called:
+Arabic name: "مول وسط البلد"
+English name: "West Elbalad Mall".
+Use the attached logo image as the main brand mark.
+
+GENERAL REQUIREMENTS:
+- Framework: Laravel 11 (or 10), PHP 8.2+
+- Frontend: Blade + TailwindCSS + Alpine.js
+- Admin: Custom Blade Admin (NO Filament, NO Nova)
+- Database: MySQL
+- Auth: Laravel Breeze (email/password)
+- RTL support for Arabic + LTR English
+- Optional languages: AR + EN (structure should support bilingual content)
+- Fully responsive (mobile first)
+
+BRAND & DESIGN (use logo as reference):
+- Primary brand: shopping mall / lifestyle / family friendly.
+- Extract a color palette from the attached logo (gold
+en/copper gradient + dark brown/gray for text). Use them as main accent colors, plus neutral grays and white/black for backgrounds.
+- Typography suggestions:
+  - Arabic: modern readable sans (e.g. Cairo, Noto Sans Arabic, or similar).
+  - English: clean geometric sans (e.g. Poppins, Inter, or similar).
+- Visual style:
+  - Elegant, modern mall style: mix of light sections and dark overlays.
+  - Use hero images, cards for shops and offers, icons for facilities (parking, food court, kids area, etc.).
+  - Big Arabic headings (e.g. "اكتشف تجربة تسوق مختلفة في مول وسط البلد").
+
+FRONTEND PAGES (PUBLIC):
+
+1) Home (/) 
+   Sections (in this order):
+   - Hero:
+     - Background image or slider (admin managed).
+     - Main Arabic headline: e.g. "وجهتك الأولى للتسوق والترفيه في قلب المدينة".
+     - Sub‑headline, CTA buttons (استكشف المحلات – عروض اليوم).
+   - About the mall:
+     - Short intro AR/EN + key numbers (عدد المحلات، المطاعم، المواقف، الزوار شهرياً).
+   - Shop Categories:
+     - Grid of categories (أزياء، مطاعم، كافيهات، إلكترونيات، أطفال…).
+   - Featured Shops:
+     - Cards with logo, short description, category, floor, link to shop detail.
+   - Current Offers & Events:
+     - Slider or grid showing active offers/events with date range.
+   - Facilities & Services:
+     - Icons and short text (  واي فاي، منطقة ألعاب أطفال، ATM، دورات مياه().
+   - Location & Working Hours:
+     - Google Maps embed placeholder.
+     - Address, opening hours, contact numbers.
+   - Newsletter / contact mini form.
+
+2) Shops Listing (/shops)
+   - Filters by category, floor, name.
+   - Search bar.
+   - Pagination, cards layout.
+
+3) Shop Details (/shops/{slug})
+   - Logo, cover image.
+   - Description (AR/EN).
+   - Category, floor, opening hours.
+   - Contact info (phone, WhatsApp, social links).
+   - Gallery images.
+
+4) Offers & Events (/offers, /events)
+   - List current + upcoming offers/events.
+   - Detail page with full info, dates, images, shop relation.
+
+5) About Us (/about)
+   - Story of West Elbalad Mall.
+   - Vision, mission, values.
+   - Management message.
+
+6) Contact (/contact)
+   - Contact form (name, email, phone, subject, message).
+   - Mall contact data, map, WhatsApp link.
+
+ADMIN PANEL (/admin) — Blade Admin ONLY:
+
+Auth & access:
+- Use Laravel Breeze for authentication.
+- Prefix all admin routes with /admin and protect with auth + permissions middleware.
+
+1) Dashboard:
+   - Stats: number of shops, categories, active offers, events, messages.
+   - Latest contact messages.
+   - Upcoming events.
+
+2) User Management:
+   - Use spatie/laravel-permission.
+   - Roles: Super Admin, Admin, Content Editor (you may propose more).
+   - Permissions per module: view/create/update/delete for:
+     users, roles, shop_categories, shops, offers, events, facilities, sliders, pages, settings, messages.
+   - Blade CRUD for:
+     - Users: list, create, edit, delete, assign roles.
+     - Roles: list, create, edit, attach permissions.
+   - Only Super Admin can manage users & roles.
+
+3) Shop Categories:
+   - CRUD with fields: id, name_ar, name_en, slug, icon(optional), sort_order, is_active.
+
+4) Shops:
+   - CRUD with fields:
+     - category_id, name_ar/en, slug, description_ar/en, floor, logo, cover_image, phone, whatsapp, website, instagram, facebook, tiktok, is_featured, is_active.
+   - Attach multiple offers/events to a shop.
+   - Gallery images relation (separate table).
+
+5) Offers:
+   - CRUD with fields:
+     - title_ar/en, slug, short_ar/en, content_ar/en, shop_id(optional), start_date, end_date, banner_image, is_active, is_featured.
+
+6) Events:
+   - CRUD similar to offers, with start/end date, time, location inside the mall.
+
+7) Facilities & Services:
+   - CRUD with fields:
+     - name_ar/en, icon, short_ar/en, sort_order, is_active.
+   - Shown on home page “خدمات المول”.
+
+8) Home Slider / Hero Banners:
+   - CRUD with fields:
+     - title_ar/en, subtitle_ar/en, cta_text_ar/en, cta_link, image, sort_order, is_active, start_date(optional), end_date(optional).
+
+9) Static Pages / Settings:
+   - Basic CMS for pages like “سياسة الخصوصية – شروط الاستخدام”.
+   - Global Settings:
+     - Mall name AR/EN.
+     - Address, phones, email, WhatsApp, social links.
+     - Upload logo (current file you saw) in PNG/SVG + dark/light variants.
+     - Opening hours.
+
+10) Contact Messages:
+    - List messages, view details, change status (new/read/archived), reply email stub.
+
+TECHNICAL DETAILS:
+
+Database:
+- Design tables for:
+  users, roles, permissions, role_has_permissions, model_has_roles, model_has_permissions
+  shop_categories, shops, shop_images
+  offers, events
+  facilities
+  sliders
+  pages
+  settings
+  contact_messages
+- Include timestamps, soft deletes where appropriate.
+
+Frontend implementation:
+- Blade layouts:
+  - main layout for public site
+  - admin layout with sidebar/topbar (Blade, Tailwind, Alpine).
+- Components:
+  - navbar (supports AR/EN + active menu).
+  - footer.
+  - hero slider.
+  - shop card, offer card, event card.
+  - pagination partial, flash messages.
+- RTL/LTR:
+  - Auto switch direction based on current locale.
+  - Tailwind or CSS classes for RTL adjustments.
+
+Admin UI:
+- Built entirely with Blade + Tailwind.
+- Sidebar with sections (Dashboard, Shops, Offers, Events, Facilities, Slider, Pages, Settings, Users, Roles, Messages).
+- Show/hide menu items based on permissions.
+- Use confirmation dialogs for delete actions (Alpine.js).
+
+DELIVERABLES (how you should answer):
+1) High-level “Project Plan”.
+2) Full database schema (tables + columns + relationships).
+3) Routes map (public + admin).
+4) Roles & permissions matrix (which role can do what).
+5) Key Laravel code:
+   - migrations for all main tables
+   - models with relationships
+   - example controllers + FormRequest classes for one full module (e.g. Shops + Categories) and User/Role management
+   - example Blade templates for:
+     - public home page structure
+     - admin layout
+     - admin shops index/create/edit
+     - admin users/roles index/create/edit
+   - tailwind.config.js snippet (including RTL and color palette from logo).
+6) Seeders:
+   - Example data for categories, one floor plan, a few demo shops, one offer, one event, facilities, a Super Admin user with credentials.
+7) Short README:
+   - Installation steps, how to run migrations/seeders, default admin login, how to change logo and add first real data.
+
+IMPORTANT:
+- Use the logo as the main visual anchor for colors and style (no need to recreate it, just refer to it in design).
+- Keep code clean, PSR-compliant, and structured.
+- Focus on making the admin UX very clear and simple for non-technical mall staff.
