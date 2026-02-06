@@ -33,8 +33,8 @@ class CartController extends Controller
         })->filter()->values();
         
         $total = $cartItems->sum('subtotal');
-        
-        $paymentMethods = PaymentMethod::query()->active()->ordered()->get();
+
+        $paymentMethods = PaymentMethod::query()->publicAvailable()->ordered()->get();
 
         return view('pages.cart.index', compact('cartItems', 'total', 'paymentMethods'));
     }

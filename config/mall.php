@@ -52,6 +52,12 @@ return [
         'monthly_visitors' => '500K+',
     ],
 
+    'payments' => [
+        // Card/Visa payments should only be shown when a real payment gateway is integrated.
+        // Keep it false until the gateway/API flow is implemented and configured.
+        'card_enabled' => (bool) env('CARD_PAYMENTS_ENABLED', false),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Image Sizes

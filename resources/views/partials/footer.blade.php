@@ -101,7 +101,7 @@
             </div>
         </div>
 
-        @php($paymentMethods = \App\Models\PaymentMethod::query()->active()->ordered()->get())
+        @php($paymentMethods = \App\Models\PaymentMethod::query()->publicAvailable()->ordered()->get())
         @if ($paymentMethods->isNotEmpty())
             <div class="mt-10 pt-8 border-t border-gray-100 dark:border-secondary-800">
                 <div class="font-semibold text-secondary-900 dark:text-secondary-100">{{ app()->getLocale() === 'ar' ? 'طرق الدفع المتاحة' : 'Available Payment Methods' }}</div>

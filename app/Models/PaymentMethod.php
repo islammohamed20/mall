@@ -40,6 +40,30 @@ class PaymentMethod extends Model
         return $query->where('is_active', true);
     }
 
+    public function isPubliclyAvailable(): bool
+    {
+        if (! $this->is_active) {
+            return false;
+        }
+
+        if ($this->type === 'card' && ! config('mall.payments.card_enabled', false)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function scopePublicAvailable($query)
+    {
+        $query->active();
+
+        if (! config('mall.payments.card_enabled', false)) {
+            $query->where('type', '!=', 'card');
+        }
+
+        return $query;
+    }
+
     public function scopeOrdered($query)
     {
         return $query->orderBy('sort_order')->orderBy('id');

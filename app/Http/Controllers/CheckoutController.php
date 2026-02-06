@@ -40,7 +40,11 @@ class CheckoutController extends Controller
         }
 
         $total = $cartItems->sum('subtotal');
-        $paymentMethods = PaymentMethod::query()->active()->ordered()->get();
+        $paymentMethods = PaymentMethod::query()->publicAvailable()->ordered()->get();
+
+        if ($paymentMethods->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', app()->getLocale() === 'ar' ? 'لا توجد طرق دفع متاحة حالياً.' : 'No payment methods are currently available.');
+        }
 
         return view('pages.checkout.create', compact('cartItems', 'total', 'paymentMethods'));
     }
@@ -52,7 +56,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', app()->getLocale() === 'ar' ? 'سلتك فارغة.' : 'Your cart is empty.');
         }
 
-        $paymentMethod = PaymentMethod::query()->whereKey($request->input('payment_method_id'))->first();
+        $paymentMethod = PaymentMethod::query()->publicAvailable()->whereKey($request->input('payment_method_id'))->first();
         if (! $paymentMethod) {
             return back()->with('error', app()->getLocale() === 'ar' ? 'يرجى اختيار طريقة دفع صحيحة.' : 'Please select a valid payment method.');
         }
