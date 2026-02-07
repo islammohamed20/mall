@@ -118,8 +118,17 @@ class SiteSettingController extends Controller
                 continue;
             }
 
-            $valueAr = $data[$key]['ar'] ?? null;
-            $valueEn = $data[$key]['en'] ?? null;
+            // Note: Laravel's ConvertEmptyStringsToNull middleware turns cleared inputs into null.
+            // For site settings, clearing a field should persist as an empty string (not fall back to defaults).
+            $valueAr = $data[$key]['ar'] ?? '';
+            $valueEn = $data[$key]['en'] ?? '';
+
+            if ($valueAr === null) {
+                $valueAr = '';
+            }
+            if ($valueEn === null) {
+                $valueEn = '';
+            }
 
             if ($key === 'mall_map_embed_url') {
                 $normalize = function (?string $value): ?string {
