@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <script>
             (function () {
                 const storageKey = 'theme';
@@ -65,6 +66,69 @@
             @yield('content')
         </main>
         @include('partials.footer')
+
+        <script>
+            (function () {
+                const endpoint = '{{ route('visit.geo') }}';
+                const key = 'geo:lastSentAt';
+
+                function canUseGeo() {
+                    return typeof navigator !== 'undefined'
+                        && navigator.geolocation
+                        && window.isSecureContext;
+                }
+
+                function alreadySentRecently() {
+                    try {
+                        const ts = localStorage.getItem(key);
+                        if (!ts) return false;
+                        return (Date.now() - Number(ts)) < (1000 * 60 * 60 * 24 * 7);
+                    } catch (e) {
+                        return false;
+                    }
+                }
+
+                function markSent() {
+                    try { localStorage.setItem(key, String(Date.now())); } catch (e) {}
+                }
+
+                function csrfToken() {
+                    const el = document.querySelector('meta[name="csrf-token"]');
+                    return el ? el.getAttribute('content') : '';
+                }
+
+                function sendGeo(position) {
+                    const payload = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                        accuracy_m: position.coords.accuracy,
+                    };
+
+                    fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken(),
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: JSON.stringify(payload),
+                        credentials: 'same-origin',
+                    }).then(function () {
+                        markSent();
+                    }).catch(function () {});
+                }
+
+                if (!canUseGeo() || alreadySentRecently()) {
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    sendGeo,
+                    function () {},
+                    { enableHighAccuracy: false, timeout: 4000, maximumAge: 1000 * 60 * 60 * 6 }
+                );
+            })();
+        </script>
 
         {{-- WhatsApp Floating Button --}}
         @php($whatsappNumber = \App\Models\Setting::getValue('mall_contact_whatsapp'))

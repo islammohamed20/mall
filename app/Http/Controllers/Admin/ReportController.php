@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\Shop;
 use App\Models\ShopCategory;
 use App\Models\User;
+use App\Models\Visit;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -225,6 +226,66 @@ class ReportController extends Controller
             'categories',
             'categoryId',
             'floorId'
+        ));
+    }
+
+    /**
+     * Visits Report (public website traffic)
+     */
+    public function visits(Request $request)
+    {
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+
+        if ($startDate && $endDate) {
+            $start = Carbon::parse($startDate)->startOfDay();
+            $end = Carbon::parse($endDate)->endOfDay();
+        } else {
+            $end = now();
+            $start = now()->subDays(30);
+        }
+
+        $visitsQuery = Visit::query()->whereBetween('created_at', [$start, $end]);
+
+        $summary = [
+            'total_visits' => (clone $visitsQuery)->count(),
+            'unique_visitors' => (clone $visitsQuery)->distinct('visitor_uid')->count('visitor_uid'),
+            'unique_sessions' => (clone $visitsQuery)->distinct('session_id')->count('session_id'),
+            'with_geo' => (clone $visitsQuery)->whereNotNull('lat')->whereNotNull('lng')->count(),
+        ];
+
+        $deviceBreakdown = (clone $visitsQuery)
+            ->select('device_type', DB::raw('count(*) as count'))
+            ->groupBy('device_type')
+            ->orderByDesc('count')
+            ->get();
+
+        $topPages = (clone $visitsQuery)
+            ->select('path', DB::raw('count(*) as count'))
+            ->groupBy('path')
+            ->orderByDesc('count')
+            ->take(15)
+            ->get();
+
+        $daily = (clone $visitsQuery)
+            ->select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        $latest = Visit::query()
+            ->latest('id')
+            ->take(50)
+            ->get();
+
+        return view('admin.reports.visits', compact(
+            'startDate',
+            'endDate',
+            'summary',
+            'deviceBreakdown',
+            'topPages',
+            'daily',
+            'latest'
         ));
     }
 

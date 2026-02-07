@@ -30,6 +30,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\Admin\UnitController as AdminUnitController;
+use App\Http\Controllers\VisitGeoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -46,6 +47,9 @@ Route::get('/lang/{locale}', function (string $locale) {
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Visitor geolocation (browser-based, permission required)
+Route::post('/_visit/geo', [VisitGeoController::class, 'store'])->name('visit.geo');
 
 Route::get('/shops', [ShopController::class, 'index'])->name('shops.index');
 Route::get('/shops/{shop:slug}', [ShopController::class, 'show'])->name('shops.show');
@@ -170,6 +174,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
         Route::get('/customers', [AdminReportController::class, 'customers'])->name('customers');
         Route::get('/offers-events', [AdminReportController::class, 'offersEvents'])->name('offers-events');
         Route::get('/messages', [AdminReportController::class, 'messages'])->name('messages');
+        Route::get('/visits', [AdminReportController::class, 'visits'])->name('visits');
     });
 
     // Orders Management Routes
