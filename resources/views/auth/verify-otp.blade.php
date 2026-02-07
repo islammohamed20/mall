@@ -22,7 +22,7 @@
                 <form class="mt-8 space-y-5" method="POST" action="{{ route('otp.verify.submit') }}" x-data="otpForm()">
                     @csrf
                     <input type="hidden" name="type" value="{{ $type }}">
-                    <input type="hidden" name="code" x-model="fullCode">
+                    <input type="hidden" name="code" :value="fullCode">
 
                     {{-- OTP Input Boxes --}}
                     <div class="flex justify-center gap-2 sm:gap-3" dir="ltr">
@@ -30,7 +30,9 @@
                             <input
                                 type="text"
                                 inputmode="numeric"
+                                pattern="[0-9]*"
                                 maxlength="1"
+                                autocomplete="{{ $i === 0 ? 'one-time-code' : 'off' }}"
                                 x-ref="otp{{ $i }}"
                                 x-model="digits[{{ $i }}]"
                                 @input="handleInput($event, {{ $i }})"
@@ -89,13 +91,38 @@
 
     <script>
         function otpForm() {
+            const normalizeDigits = (input) => {
+                if (!input) return '';
+
+                // Convert Arabic-Indic (٠١٢٣٤٥٦٧٨٩) and Extended Arabic-Indic (۰۱۲۳۴۵۶۷۸۹) digits to ASCII
+                const arabicIndic = '٠١٢٣٤٥٦٧٨٩';
+                const extendedArabicIndic = '۰۱۲۳۴۵۶۷۸۹';
+                let out = '';
+
+                for (const ch of String(input)) {
+                    const idx1 = arabicIndic.indexOf(ch);
+                    if (idx1 !== -1) {
+                        out += String(idx1);
+                        continue;
+                    }
+                    const idx2 = extendedArabicIndic.indexOf(ch);
+                    if (idx2 !== -1) {
+                        out += String(idx2);
+                        continue;
+                    }
+                    out += ch;
+                }
+
+                return out;
+            };
+
             return {
                 digits: ['', '', '', '', '', ''],
                 get fullCode() {
                     return this.digits.join('');
                 },
                 handleInput(event, index) {
-                    const val = event.target.value.replace(/\D/g, '');
+                    const val = normalizeDigits(event.target.value).replace(/[^0-9]/g, '');
                     this.digits[index] = val.charAt(0) || '';
                     event.target.value = this.digits[index];
                     if (val && index < 5) {
@@ -108,7 +135,7 @@
                     }
                 },
                 handlePaste(event) {
-                    const text = (event.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+                    const text = normalizeDigits((event.clipboardData || window.clipboardData).getData('text')).replace(/[^0-9]/g, '');
                     for (let i = 0; i < 6 && i < text.length; i++) {
                         this.digits[i] = text.charAt(i);
                         if (this.$refs['otp' + i]) this.$refs['otp' + i].value = text.charAt(i);
