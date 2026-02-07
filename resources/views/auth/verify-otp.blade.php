@@ -25,7 +25,7 @@
                     <input type="hidden" name="code" :value="fullCode">
 
                     {{-- OTP Input Boxes --}}
-                    <div class="flex justify-center gap-2 sm:gap-3" dir="ltr">
+                    <div class="grid grid-cols-6 gap-2 sm:gap-3 max-w-xs mx-auto" dir="ltr">
                         @for ($i = 0; $i < 6; $i++)
                             <input
                                 type="text"
@@ -38,7 +38,7 @@
                                 @input="handleInput($event, {{ $i }})"
                                 @keydown.backspace="handleBackspace($event, {{ $i }})"
                                 @paste.prevent="handlePaste($event)"
-                                class="w-11 h-14 sm:w-12 sm:h-16 text-center text-xl font-bold rounded-xl border-2 border-gray-200 dark:border-secondary-700 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-secondary-50 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all outline-none"
+                                class="w-full h-12 sm:h-14 text-center text-xl sm:text-2xl font-bold rounded-xl border-2 border-gray-200 dark:border-secondary-700 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-secondary-50 shadow-sm focus:border-primary-500 focus:ring-4 focus:ring-primary-500/15 transition-all outline-none"
                             />
                         @endfor
                     </div>
