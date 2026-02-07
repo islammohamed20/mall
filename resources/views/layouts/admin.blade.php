@@ -289,5 +289,144 @@
                 </main>
             </div>
         </div>
+
+        <script>
+            (function () {
+                const locale = '{{ app()->getLocale() }}';
+
+                function isEditable(el) {
+                    if (!el) return false;
+                    const tag = (el.tagName || '').toLowerCase();
+                    return tag === 'input' || tag === 'textarea' || tag === 'select' || el.isContentEditable;
+                }
+
+                function getCurrentForm() {
+                    const active = document.activeElement;
+                    if (active && active.form) {
+                        return active.form;
+                    }
+
+                    const main = document.querySelector('main');
+                    if (!main) return null;
+
+                    const forms = Array.from(main.querySelectorAll('form'));
+                    if (forms.length === 0) return null;
+
+                    return forms[0];
+                }
+
+                function submitForm(form) {
+                    if (!form) {
+                        return;
+                    }
+
+                    const submit = form.querySelector('button[type="submit"], input[type="submit"]');
+                    if (submit) {
+                        submit.click();
+                        return;
+                    }
+
+                    form.submit();
+                }
+
+                function clearForm(form) {
+                    if (!form) return;
+
+                    const ok = window.confirm(
+                        locale === 'ar'
+                            ? 'هل تريد مسح جميع الحقول في هذه الصفحة؟'
+                            : 'Clear all fields on this form?'
+                    );
+                    if (!ok) return;
+
+                    const elements = Array.from(form.elements || []);
+                    for (const el of elements) {
+                        const name = el.getAttribute && el.getAttribute('name');
+                        if (name === '_token' || name === '_method') {
+                            continue;
+                        }
+
+                        const tag = (el.tagName || '').toLowerCase();
+                        const type = ((el.getAttribute && el.getAttribute('type')) || '').toLowerCase();
+
+                        if (tag === 'input') {
+                            if (type === 'hidden' || type === 'submit' || type === 'button' || type === 'reset') {
+                                continue;
+                            }
+                            if (type === 'checkbox' || type === 'radio') {
+                                el.checked = false;
+                                continue;
+                            }
+                            el.value = '';
+                            continue;
+                        }
+
+                        if (tag === 'textarea') {
+                            el.value = '';
+                            continue;
+                        }
+
+                        if (tag === 'select') {
+                            const hasEmpty = Array.from(el.options || []).some(o => (o.value ?? '') === '');
+                            if (hasEmpty) {
+                                el.value = '';
+                            } else {
+                                el.selectedIndex = 0;
+                            }
+                        }
+                    }
+                }
+
+                function closeMobileSidebar() {
+                    const overlay = document.querySelector('.lg\\:hidden [x-show="sidebarOpen"] .fixed.inset-0');
+                    if (overlay) {
+                        overlay.click();
+                    }
+                }
+
+                window.addEventListener('keydown', function (e) {
+                    // Esc closes sidebar
+                    if (e.key === 'Escape') {
+                        closeMobileSidebar();
+                        return;
+                    }
+
+                    const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+                    if (!isCtrlOrCmd) return;
+
+                    const key = (e.key || '').toLowerCase();
+
+                    // Ctrl/Cmd + S => submit current form
+                    if (key === 's' && !e.shiftKey && !e.altKey) {
+                        e.preventDefault();
+                        submitForm(getCurrentForm());
+                        return;
+                    }
+
+                    // Ctrl/Cmd + Enter => submit current form
+                    if (key === 'enter' && !e.shiftKey && !e.altKey) {
+                        e.preventDefault();
+                        submitForm(getCurrentForm());
+                        return;
+                    }
+
+                    // Ctrl/Cmd + Shift + D => clear form fields
+                    if (key === 'd' && e.shiftKey && !e.altKey) {
+                        e.preventDefault();
+                        clearForm(getCurrentForm());
+                        return;
+                    }
+
+                    // Ctrl/Cmd + Shift + T => toggle theme
+                    if (key === 't' && e.shiftKey && !e.altKey) {
+                        e.preventDefault();
+                        if (window.__toggleTheme) {
+                            window.__toggleTheme();
+                        }
+                        return;
+                    }
+                });
+            })();
+        </script>
     </body>
 </html>
