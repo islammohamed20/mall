@@ -178,6 +178,20 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
                                 </svg>
                             </button>
+
+                            <button
+                                type="button"
+                                class="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 dark:border-secondary-700 dark:hover:bg-secondary-900"
+                                title="{{ app()->getLocale() === 'ar'
+                                    ? 'اختصارات لوحة التحكم:\nCtrl/⌘ + S: حفظ\nCtrl/⌘ + Enter: تنفيذ/حفظ\nCtrl/⌘ + Shift + D: مسح الحقول\nCtrl/⌘ + Shift + X: مسح الحقول (بديل)\nCtrl/⌘ + Shift + T: تبديل الثيم\nEsc: إغلاق القائمة'
+                                    : 'Admin shortcuts:\nCtrl/⌘ + S: Save\nCtrl/⌘ + Enter: Submit\nCtrl/⌘ + Shift + D: Clear fields\nCtrl/⌘ + Shift + X: Clear fields (alt)\nCtrl/⌘ + Shift + T: Toggle theme\nEsc: Close menu' }}"
+                                onclick="alert(this.title)"
+                            >
+                                <span class="sr-only">{{ app()->getLocale() === 'ar' ? 'الاختصارات' : 'Shortcuts' }}</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm9.75-4.5a.75.75 0 0 0-.75.75v.008a.75.75 0 0 0 1.5 0V8.25a.75.75 0 0 0-.75-.75Zm0 3a.75.75 0 0 0-.75.75v5.25a.75.75 0 0 0 1.5 0v-5.25a.75.75 0 0 0-.75-.75Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
                             <a class="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 dark:border-secondary-700 dark:hover:bg-secondary-900" href="{{ route('home') }}">
                                 {{ app()->getLocale() === 'ar' ? 'الموقع' : 'Website' }}
                             </a>
@@ -293,6 +307,7 @@
         <script>
             (function () {
                 const locale = '{{ app()->getLocale() }}';
+                window.__adminShortcutsLoaded = true;
 
                 function isEditable(el) {
                     if (!el) return false;
@@ -395,9 +410,10 @@
                     if (!isCtrlOrCmd) return;
 
                     const key = (e.key || '').toLowerCase();
+                    const code = (e.code || '').toLowerCase();
 
                     // Ctrl/Cmd + S => submit current form
-                    if (key === 's' && !e.shiftKey && !e.altKey) {
+                    if ((key === 's' || code === 'keys') && !e.shiftKey && !e.altKey) {
                         e.preventDefault();
                         submitForm(getCurrentForm());
                         return;
@@ -411,21 +427,28 @@
                     }
 
                     // Ctrl/Cmd + Shift + D => clear form fields
-                    if (key === 'd' && e.shiftKey && !e.altKey) {
+                    if ((key === 'd' || code === 'keyd') && e.shiftKey && !e.altKey) {
+                        e.preventDefault();
+                        clearForm(getCurrentForm());
+                        return;
+                    }
+
+                    // Ctrl/Cmd + Shift + X => clear form fields (alternative)
+                    if ((key === 'x' || code === 'keyx') && e.shiftKey && !e.altKey) {
                         e.preventDefault();
                         clearForm(getCurrentForm());
                         return;
                     }
 
                     // Ctrl/Cmd + Shift + T => toggle theme
-                    if (key === 't' && e.shiftKey && !e.altKey) {
+                    if ((key === 't' || code === 'keyt') && e.shiftKey && !e.altKey) {
                         e.preventDefault();
                         if (window.__toggleTheme) {
                             window.__toggleTheme();
                         }
                         return;
                     }
-                });
+                }, { capture: true });
             })();
         </script>
     </body>
