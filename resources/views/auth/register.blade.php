@@ -18,6 +18,11 @@
                         @error('email') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
                     </div>
                     <div>
+                        <label class="form-label">{{ app()->getLocale() === 'ar' ? 'رقم الهاتف' : 'Phone' }}</label>
+                        <input class="form-input" name="phone" value="{{ old('phone') }}" required />
+                        @error('phone') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+                    </div>
+                    <div>
                         <label class="form-label">{{ app()->getLocale() === 'ar' ? 'كلمة المرور' : 'Password' }}</label>
                         <input class="form-input" type="password" name="password" required />
                         @error('password') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
