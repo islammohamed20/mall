@@ -44,7 +44,7 @@ class TrackVisit
         $throttleKey = sprintf(
             'visit:%s:%s:%s',
             $visitorUid,
-            sha1((string) $request->fullUrlWithoutQuery() . '|' . $request->method()),
+            sha1((string) $request->fullUrlWithoutQuery([]) . '|' . $request->method()),
             now()->format('YmdHi')
         );
 
