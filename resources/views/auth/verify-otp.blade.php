@@ -25,7 +25,7 @@
                     <input type="hidden" name="code" :value="fullCode">
 
                     {{-- OTP Input Boxes --}}
-                    <div class="flex items-center justify-center gap-2 sm:gap-3 flex-nowrap overflow-x-auto py-1" dir="ltr" style="display:flex;flex-wrap:nowrap;justify-content:center;gap:0.5rem;">
+                    <div class="flex items-center justify-center gap-2 sm:gap-3 flex-nowrap max-w-sm mx-auto" dir="ltr">
                         @for ($i = 0; $i < 6; $i++)
                             <input
                                 type="text"
@@ -33,13 +33,13 @@
                                 pattern="[0-9]*"
                                 maxlength="1"
                                 autocomplete="{{ $i === 0 ? 'one-time-code' : 'off' }}"
+                                {{ $i === 0 ? 'autofocus' : '' }}
                                 x-ref="otp{{ $i }}"
                                 x-model="digits[{{ $i }}]"
                                 @input="handleInput($event, {{ $i }})"
                                 @keydown.backspace="handleBackspace($event, {{ $i }})"
                                 @paste.prevent="handlePaste($event)"
-                                class="w-10 h-12 sm:w-12 sm:h-14 shrink-0 text-center text-xl sm:text-2xl font-bold rounded-xl border-2 border-gray-200 dark:border-secondary-700 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-secondary-50 shadow-sm focus:border-primary-500 focus:ring-4 focus:ring-primary-500/15 transition-all outline-none"
-                                style="width:3rem;height:3.5rem;flex:0 0 auto;"
+                                class="w-10 h-12 sm:w-12 sm:h-14 shrink-0 text-center text-xl sm:text-2xl font-bold rounded-2xl border border-gray-200 dark:border-secondary-700 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-secondary-50 shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 transition-all outline-none"
                             />
                         @endfor
                     </div>
