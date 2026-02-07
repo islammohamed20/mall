@@ -75,6 +75,9 @@
 
             {{-- Auth Actions --}}
             @auth
+                <a class="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-sm dark:border-secondary-700 dark:hover:bg-secondary-900 transition-colors" href="{{ route('account.show') }}">
+                    {{ app()->getLocale() === 'ar' ? 'حسابي' : 'My Account' }}
+                </a>
                 @if(auth()->user()?->is_admin)
                     <a class="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-sm dark:border-secondary-700 dark:hover:bg-secondary-900 transition-colors" href="{{ route('admin.dashboard') }}">
                         {{ app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Admin' }}
@@ -233,6 +236,9 @@
 
                 {{-- Auth Actions --}}
                 @auth
+                    <a class="flex-1 text-center px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium dark:border-secondary-700 dark:hover:bg-secondary-900 transition-colors" href="{{ route('account.show') }}">
+                        {{ app()->getLocale() === 'ar' ? 'حسابي' : 'My Account' }}
+                    </a>
                     @if(auth()->user()?->is_admin)
                         <a class="flex-1 text-center px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-medium dark:border-secondary-700 dark:hover:bg-secondary-900 transition-colors" href="{{ route('admin.dashboard') }}">
                             {{ app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Admin' }}

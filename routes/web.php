@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\SliderController as AdminSliderController;
 use App\Http\Controllers\Admin\ProductAttributeController as AdminProductAttributeController;
 use App\Http\Controllers\Admin\SiteSettingController as AdminSiteSettingController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
@@ -100,6 +101,8 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
 
+Route::get('/account', [AccountController::class, 'show'])->middleware('auth')->name('account.show');
+
 Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
@@ -178,4 +181,4 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 // Direct Shop URL (must be at the end to avoid conflicts)
 // Example: 192.168.1.26/style-store
 Route::get('/{shop:slug}', [ShopController::class, 'show'])->name('shop.direct')
-    ->where('shop', '^(?!admin|login|logout|register|password|shops|cart|checkout|orders|favorites|offers|events|facilities|about|contact|lang|search|api|units|verify-otp|resend-otp|forgot-password|reset-password).*$');
+    ->where('shop', '^(?!admin|login|logout|register|password|account|shops|cart|checkout|orders|favorites|offers|events|facilities|about|contact|lang|search|api|units|verify-otp|resend-otp|forgot-password|reset-password).*$');
