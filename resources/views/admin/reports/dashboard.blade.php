@@ -170,6 +170,17 @@
                 <p class="mt-2 font-medium text-sm">{{ app()->getLocale() === 'ar' ? 'تقرير الزيارات' : 'Visits Report' }}</p>
                 <p class="text-xs text-secondary-500">{{ app()->getLocale() === 'ar' ? 'حركة الموقع' : 'Traffic' }}</p>
             </a>
+
+            <a href="{{ route('admin.reports.security') }}" class="admin-card p-4 hover:shadow-md transition-shadow text-center group">
+                <div class="w-12 h-12 mx-auto bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1.5l7.5 4.5v6c0 5.25-3.75 9.75-7.5 10.5C8.25 21.75 4.5 17.25 4.5 12V6L12 1.5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01" />
+                    </svg>
+                </div>
+                <p class="mt-2 font-medium text-sm">{{ app()->getLocale() === 'ar' ? 'تقرير الأمان' : 'Security Report' }}</p>
+                <p class="text-xs text-secondary-500">{{ app()->getLocale() === 'ar' ? 'محاولات و OTP' : 'Logins & OTP' }}</p>
+            </a>
         </div>
 
         {{-- Charts Row --}}

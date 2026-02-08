@@ -27,6 +27,7 @@ class Shop extends Model
         'phone',
         'whatsapp',
         'email',
+        'owner_email',
         'website',
         'instagram',
         'facebook',
@@ -157,7 +158,10 @@ class Shop extends Model
         if (! $this->whatsapp) {
             return null;
         }
-        $number = preg_replace('/[^0-9]/', '', $this->whatsapp);
+        $number = Setting::normalizeWhatsappPhone($this->whatsapp);
+        if (! $number) {
+            return null;
+        }
 
         return "https://wa.me/{$number}";
     }

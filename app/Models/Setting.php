@@ -88,6 +88,30 @@ class Setting extends Model
         return $value;
     }
 
+    public static function normalizeWhatsappPhone(?string $value): ?string
+    {
+        if (! filled($value)) {
+            return null;
+        }
+
+        $digits = preg_replace('/[^0-9]/', '', (string) $value);
+        $digits = trim((string) $digits);
+
+        if ($digits === '') {
+            return null;
+        }
+
+        if (str_starts_with($digits, '00')) {
+            $digits = substr($digits, 2);
+        }
+
+        if (str_starts_with($digits, '01') && strlen($digits) === 11) {
+            $digits = '20'.substr($digits, 1);
+        }
+
+        return $digits;
+    }
+
     /**
      * Set a setting value
      */

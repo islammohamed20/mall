@@ -9,6 +9,16 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
+        // Hide the events section from the public when there are no active (current/upcoming) events.
+        abort_unless(
+            Event::query()->active()->where(function ($q) {
+                $q->current()->orWhere(function ($q2) {
+                    $q2->upcoming();
+                });
+            })->exists(),
+            404
+        );
+
         $eventsQuery = Event::query()
             ->active()
             ->with('shop')

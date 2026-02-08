@@ -10,6 +10,7 @@ use App\Models\Offer;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\ShopCategory;
+use App\Models\SecurityEvent;
 use App\Models\User;
 use App\Models\Visit;
 use Carbon\Carbon;
@@ -159,6 +160,42 @@ class ReportController extends Controller
             'salesByShop',
             'orders'
         ));
+    }
+
+    /**
+     * Security report (failed logins, OTP failures, admin logins, ...)
+     */
+    public function security(Request $request)
+    {
+        $from = $request->get('from');
+        $to = $request->get('to');
+
+        $end = $to ? Carbon::parse($to)->endOfDay() : now();
+        $start = $from ? Carbon::parse($from)->startOfDay() : now()->subDays(30);
+
+        $query = SecurityEvent::query()
+            ->whereBetween('created_at', [$start, $end])
+            ->latest('id');
+
+        if ($request->filled('q')) {
+            $q = trim((string) $request->input('q'));
+            $query->where(function ($builder) use ($q) {
+                $builder->where('type', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%")
+                    ->orWhere('ip', 'like', "%{$q}%");
+            });
+        }
+
+        $events = $query->paginate(30)->withQueryString();
+
+        $summary = SecurityEvent::query()
+            ->whereBetween('created_at', [$start, $end])
+            ->select('type', DB::raw('count(*) as c'))
+            ->groupBy('type')
+            ->pluck('c', 'type')
+            ->toArray();
+
+        return view('admin.reports.security', compact('events', 'summary'));
     }
 
     /**

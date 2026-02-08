@@ -9,6 +9,12 @@ class OfferController extends Controller
 {
     public function index(Request $request)
     {
+        // Hide the offers section from the public when there are no active (current/upcoming) offers.
+        abort_unless(
+            Offer::query()->active()->whereDate('end_date', '>=', today())->exists(),
+            404
+        );
+
         $offersQuery = Offer::query()
             ->active()
             ->with('shop')

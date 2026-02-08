@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class Otp extends Model
 {
@@ -33,13 +34,29 @@ class Otp extends Model
             ->where('used', false)
             ->update(['used' => true]);
 
-        return static::create([
+        $otp = static::create([
             'email' => $email,
             'code' => str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT),
             'type' => $type,
             'used' => false,
             'expires_at' => now()->addMinutes(10),
         ]);
+
+        try {
+            if (Schema::hasTable('admin_notifications')) {
+                AdminNotification::create([
+                    'type' => 'otp.generated',
+                    'level' => 'info',
+                    'title' => 'OTP generated',
+                    'body' => "Email: {$email} | Type: {$type}",
+                    'data' => ['email' => $email, 'otp_type' => $type],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
+        return $otp;
     }
 
     /**

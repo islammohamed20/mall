@@ -29,6 +29,10 @@ class SiteSettingController extends Controller
         'mall_stats_restaurants',
         'mall_stats_parking_spots',
         'mall_stats_monthly_visitors',
+
+        // Admin monitoring
+        'admin_monitor_email',
+        'admin_popup_enabled',
     ];
 
     public function edit()
@@ -58,6 +62,9 @@ class SiteSettingController extends Controller
             'mall_stats_restaurants' => ['ar' => (string) config('mall.stats.restaurants'), 'en' => (string) config('mall.stats.restaurants')],
             'mall_stats_parking_spots' => ['ar' => (string) config('mall.stats.parking_spots'), 'en' => (string) config('mall.stats.parking_spots')],
             'mall_stats_monthly_visitors' => ['ar' => (string) config('mall.stats.monthly_visitors'), 'en' => (string) config('mall.stats.monthly_visitors')],
+
+            'admin_monitor_email' => ['ar' => '', 'en' => ''],
+            'admin_popup_enabled' => ['ar' => '1', 'en' => '1'],
         ];
 
         $values = [];
@@ -110,6 +117,11 @@ class SiteSettingController extends Controller
             'mall_stats_parking_spots.en' => ['nullable', 'string', 'max:50'],
             'mall_stats_monthly_visitors.ar' => ['nullable', 'string', 'max:50'],
             'mall_stats_monthly_visitors.en' => ['nullable', 'string', 'max:50'],
+
+            'admin_monitor_email.ar' => ['nullable', 'email', 'max:255'],
+            'admin_monitor_email.en' => ['nullable', 'email', 'max:255'],
+            'admin_popup_enabled.ar' => ['nullable', 'in:0,1'],
+            'admin_popup_enabled.en' => ['nullable', 'in:0,1'],
         ]);
 
         $fileKeys = ['mall_logo', 'mall_favicon'];
@@ -147,6 +159,15 @@ class SiteSettingController extends Controller
                 $valueAr = $normalize($valueAr);
                 $valueEn = $normalize($valueEn);
 
+                if (blank($valueAr) && filled($valueEn)) {
+                    $valueAr = $valueEn;
+                }
+                if (blank($valueEn) && filled($valueAr)) {
+                    $valueEn = $valueAr;
+                }
+            }
+
+            if (in_array($key, ['admin_monitor_email', 'admin_popup_enabled'], true)) {
                 if (blank($valueAr) && filled($valueEn)) {
                     $valueAr = $valueEn;
                 }

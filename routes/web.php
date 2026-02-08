@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
+use App\Http\Controllers\Admin\AdminNotificationController as AdminAdminNotificationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EmailSettingController as AdminEmailSettingController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
@@ -8,6 +9,8 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\FacebookPostController as AdminFacebookPostController;
 use App\Http\Controllers\Admin\FacilityController as AdminFacilityController;
+use App\Http\Controllers\Admin\EmailOutboxController as AdminEmailOutboxController;
+use App\Http\Controllers\Admin\OtpController as AdminOtpController;
 use App\Http\Controllers\Admin\FloorController as AdminFloorController;
 use App\Http\Controllers\Admin\OfferController as AdminOfferController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
@@ -17,6 +20,7 @@ use App\Http\Controllers\Admin\ShopController as AdminShopController;
 use App\Http\Controllers\Admin\SliderController as AdminSliderController;
 use App\Http\Controllers\Admin\ProductAttributeController as AdminProductAttributeController;
 use App\Http\Controllers\Admin\SiteSettingController as AdminSiteSettingController;
+use App\Http\Controllers\Admin\ThemeController as AdminThemeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CartController;
@@ -160,6 +164,18 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::put('email', [AdminEmailSettingController::class, 'update'])->name('email.update');
     Route::post('email/test', [AdminEmailSettingController::class, 'sendTest'])->name('email.test');
 
+    // Seasonal Themes (manual activation)
+    Route::get('themes', [AdminThemeController::class, 'index'])->name('themes.index');
+    Route::post('themes/activate', [AdminThemeController::class, 'activate'])->name('themes.activate');
+    Route::post('themes/deactivate', [AdminThemeController::class, 'deactivate'])->name('themes.deactivate');
+
+    // Monitoring
+    Route::get('otps', [AdminOtpController::class, 'index'])->name('otps.index');
+    Route::prefix('emails/outbox')->name('emails.outbox.')->group(function () {
+        Route::get('/', [AdminEmailOutboxController::class, 'index'])->name('index');
+        Route::get('/{emailOutbox}', [AdminEmailOutboxController::class, 'show'])->name('show');
+    });
+
     Route::get('messages', [AdminContactMessageController::class, 'index'])->name('messages.index');
     Route::get('messages/{contactMessage}', [AdminContactMessageController::class, 'show'])->name('messages.show');
     Route::patch('messages/{contactMessage}/status', [AdminContactMessageController::class, 'updateStatus'])->name('messages.status');
@@ -175,7 +191,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
         Route::get('/offers-events', [AdminReportController::class, 'offersEvents'])->name('offers-events');
         Route::get('/messages', [AdminReportController::class, 'messages'])->name('messages');
         Route::get('/visits', [AdminReportController::class, 'visits'])->name('visits');
+        Route::get('/security', [AdminReportController::class, 'security'])->name('security');
     });
+
+    Route::post('notifications/{adminNotification}/read', [AdminAdminNotificationController::class, 'markRead'])->name('notifications.read');
 
     // Orders Management Routes
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');

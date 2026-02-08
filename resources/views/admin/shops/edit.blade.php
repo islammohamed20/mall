@@ -79,9 +79,18 @@
                     <input class="form-input" name="email" value="{{ old('email', $shop->email) }}" />
                 </div>
                 <div>
+                    <label class="form-label">{{ app()->getLocale() === 'ar' ? 'إيميل صاحب المحل' : 'Owner Email' }}</label>
+                    <input class="form-input" name="owner_email" value="{{ old('owner_email', $shop->owner_email) }}" placeholder="{{ app()->getLocale() === 'ar' ? 'للإشعارات واستلام الطلبات' : 'For notifications & receiving orders' }}" />
+                    @error('owner_email') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
                     <label class="form-label">{{ app()->getLocale() === 'ar' ? 'الموقع' : 'Website' }}</label>
                     <input class="form-input" name="website" value="{{ old('website', $shop->website) }}" />
                 </div>
+                <div></div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

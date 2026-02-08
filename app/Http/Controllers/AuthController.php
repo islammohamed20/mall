@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\Otp;
+use App\Models\SecurityEvent;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,11 +29,14 @@ class AuthController extends Controller
             $user = $request->user();
 
             if ($user && $user->is_admin) {
+                SecurityEvent::record('admin_login', $request, userId: (int) $user->id, email: (string) $user->email);
                 return redirect()->intended(route('admin.dashboard'));
             }
 
             return redirect()->route('home');
         }
+
+        SecurityEvent::record('login_failed', $request, meta: [], userId: null, email: (string) $request->input('email'));
 
         return back()
             ->withErrors(['email' => app()->getLocale() === 'ar' ? 'بيانات الدخول غير صحيحة.' : 'Invalid credentials.'])
@@ -114,6 +118,7 @@ class AuthController extends Controller
         }
 
         if (! Otp::verify($email, $request->code, $type)) {
+            SecurityEvent::record('otp_verify_failed', $request, meta: ['type' => $type], userId: null, email: (string) $email);
             return back()->withErrors([
                 'code' => app()->getLocale() === 'ar'
                     ? 'رمز التحقق غير صحيح أو منتهي الصلاحية.'

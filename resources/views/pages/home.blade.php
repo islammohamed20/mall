@@ -1,9 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $showOffers = $publicSections['offers'] ?? true;
+        $showUnits = $publicSections['units'] ?? true;
+        $seasonThemeKeyLocal = $seasonThemeKey ?? app(\App\Services\SeasonThemeService::class)->activeKey();
+    @endphp
+
     <section class="relative overflow-hidden">
         <div class="absolute inset-0">
             <div class="absolute inset-0 hero-overlay"></div>
+            @if ($seasonThemeKeyLocal === 'ramadan')
+                <div class="ramadan-hero-decor absolute inset-0 pointer-events-none overflow-hidden">
+                    <svg class="ramadan-float absolute top-8 sm:top-10 {{ app()->getLocale() === 'ar' ? 'right-6 sm:right-10' : 'left-6 sm:left-10' }} w-14 h-14 sm:w-20 sm:h-20 text-emerald-200/50" viewBox="0 0 64 64" fill="none" aria-hidden="true" style="animation-delay: -0.8s;">
+                        <path fill="currentColor" d="M41.6 12.1c-7.9 2.2-13.7 9.5-13.7 18 0 10.3 8.3 18.6 18.6 18.6 3.3 0 6.5-.9 9.3-2.5-3.2 4.7-8.6 7.8-14.7 7.8-9.8 0-17.7-7.9-17.7-17.7 0-8.7 6.3-16 14.6-17.5-1.4-1.1-3-2.1-4.8-2.7 2.8-1.5 5.9-2.3 9.1-2z"/>
+                    </svg>
+
+                    <svg class="ramadan-drift absolute top-14 sm:top-16 {{ app()->getLocale() === 'ar' ? 'left-6 sm:left-12' : 'right-6 sm:right-12' }} w-12 h-12 sm:w-16 sm:h-16 text-amber-200/45" viewBox="0 0 64 64" fill="none" aria-hidden="true" style="animation-delay: -2.3s;">
+                        <path fill="currentColor" d="M32 10c8.8 0 16 7.2 16 16 0 12-10.8 21.8-16 28-5.2-6.2-16-16-16-28 0-8.8 7.2-16 16-16zm0 7a9 9 0 100 18 9 9 0 000-18z"/>
+                        <path fill="currentColor" d="M24 28h16v2H24zm2 6h12v2H26z" opacity=".55"/>
+                    </svg>
+
+                    <svg class="ramadan-float hidden sm:block absolute bottom-12 {{ app()->getLocale() === 'ar' ? 'right-16' : 'left-16' }} w-14 h-14 text-emerald-100/35" viewBox="0 0 64 64" fill="none" aria-hidden="true" style="animation-delay: -1.6s;">
+                        <path fill="currentColor" d="M41.6 12.1c-7.9 2.2-13.7 9.5-13.7 18 0 10.3 8.3 18.6 18.6 18.6 3.3 0 6.5-.9 9.3-2.5-3.2 4.7-8.6 7.8-14.7 7.8-9.8 0-17.7-7.9-17.7-17.7 0-8.7 6.3-16 14.6-17.5-1.4-1.1-3-2.1-4.8-2.7 2.8-1.5 5.9-2.3 9.1-2z"/>
+                    </svg>
+
+                    <span class="ramadan-twinkle absolute top-24 left-1/2 w-2 h-2 rounded-full bg-white/60" style="animation-delay: -0.4s;"></span>
+                    <span class="ramadan-twinkle absolute top-12 left-1/3 w-1.5 h-1.5 rounded-full bg-white/55" style="animation-delay: -1.1s;"></span>
+                    <span class="ramadan-twinkle hidden sm:block absolute top-40 right-1/3 w-1.5 h-1.5 rounded-full bg-white/50" style="animation-delay: -1.9s;"></span>
+                    <span class="ramadan-twinkle hidden sm:block absolute bottom-28 left-1/4 w-2 h-2 rounded-full bg-white/55" style="animation-delay: -2.6s;"></span>
+                    <span class="ramadan-twinkle absolute bottom-16 right-1/4 w-1.5 h-1.5 rounded-full bg-white/45" style="animation-delay: -3.2s;"></span>
+                </div>
+            @endif
         </div>
         <div class="relative max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24" x-data="{ i: 0 }" x-init="setInterval(() => { i = (i + 1) % {{ max(1, $sliders->count()) }} }, 7000)">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
@@ -21,12 +49,21 @@
                                     <a class="btn-gold w-full sm:w-auto" href="{{ $slide->cta_link ?: route('shops.index') }}">
                                         {{ $slide->cta_text ?: (app()->getLocale() === 'ar' ? 'استكشف المحلات' : 'Explore Shops') }}
                                     </a>
-                                    <a class="btn-white w-full sm:w-auto" href="{{ $slide->cta_link_2 ?: route('offers.index') }}">
-                                        {{ $slide->cta_text2 ?: (app()->getLocale() === 'ar' ? 'عروض اليوم' : "Today's Offers") }}
-                                    </a>
-                                    <a class="btn-white w-full sm:w-auto" href="{{ route('units.index') }}">
-                                        {{ app()->getLocale() === 'ar' ? 'احجز وحدتك' : 'Book Your Unit' }}
-                                    </a>
+                                    @if ($slide->cta_link_2)
+                                        <a class="btn-white w-full sm:w-auto" href="{{ $slide->cta_link_2 }}">
+                                            {{ $slide->cta_text2 ?: (app()->getLocale() === 'ar' ? 'عروض اليوم' : "Today's Offers") }}
+                                        </a>
+                                    @elseif ($showOffers)
+                                        <a class="btn-white w-full sm:w-auto" href="{{ route('offers.index') }}">
+                                            {{ $slide->cta_text2 ?: (app()->getLocale() === 'ar' ? 'عروض اليوم' : "Today's Offers") }}
+                                        </a>
+                                    @endif
+
+                                    @if ($showUnits)
+                                        <a class="btn-white w-full sm:w-auto" href="{{ route('units.index') }}">
+                                            {{ app()->getLocale() === 'ar' ? 'احجز وحدتك' : 'Book Your Unit' }}
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
@@ -39,8 +76,12 @@
                         </p>
                         <div class="mt-8 flex flex-wrap gap-3">
                             <a class="btn-gold w-full sm:w-auto" href="{{ route('shops.index') }}">{{ app()->getLocale() === 'ar' ? 'استكشف المحلات' : 'Explore Shops' }}</a>
-                            <a class="btn-white w-full sm:w-auto" href="{{ route('offers.index') }}">{{ app()->getLocale() === 'ar' ? 'عروض اليوم' : "Today's Offers" }}</a>
-                            <a class="btn-white w-full sm:w-auto" href="{{ route('units.index') }}">{{ app()->getLocale() === 'ar' ? 'احجز وحدتك' : 'Book Your Unit' }}</a>
+                            @if ($showOffers)
+                                <a class="btn-white w-full sm:w-auto" href="{{ route('offers.index') }}">{{ app()->getLocale() === 'ar' ? 'عروض اليوم' : "Today's Offers" }}</a>
+                            @endif
+                            @if ($showUnits)
+                                <a class="btn-white w-full sm:w-auto" href="{{ route('units.index') }}">{{ app()->getLocale() === 'ar' ? 'احجز وحدتك' : 'Book Your Unit' }}</a>
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -160,10 +201,29 @@
             <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach ($featuredShops as $shop)
                     <a href="{{ route('shop.direct', $shop) }}" class="card overflow-hidden hover:-translate-y-0.5">
-                        <div class="h-32 bg-gradient-to-br from-primary-200 to-gold-200"></div>
-                        <div class="p-4 sm:p-5">
-                            <div class="font-semibold text-secondary-900 dark:text-secondary-50">{{ $shop->name }}</div>
-                            <div class="mt-1 text-sm text-secondary-600 dark:text-secondary-300">
+                        <div class="relative h-32 overflow-visible">
+                            <div class="absolute inset-0 bg-gray-100 dark:bg-secondary-900 overflow-hidden z-0">
+                                @if ($shop->cover_url)
+                                    <img class="w-full h-full object-cover" src="{{ $shop->cover_url }}" alt="{{ $shop->name }}" loading="lazy" />
+                                @else
+                                    <div class="h-32 bg-gradient-to-br from-primary-200 to-gold-200 dark:from-primary-900/40 dark:to-gold-900/30"></div>
+                                @endif
+                            </div>
+                            <div class="absolute -bottom-6 z-10 {{ app()->getLocale() === 'ar' ? 'right-4' : 'left-4' }}">
+                                @if ($shop->logo_url)
+                                    <div class="h-14 w-14 rounded-2xl bg-white dark:bg-secondary-950 shadow-lg ring-1 ring-black/5 dark:ring-white/10 overflow-hidden flex items-center justify-center">
+                                        <img class="w-full h-full object-contain p-2" src="{{ $shop->logo_url }}" alt="{{ $shop->name }}" loading="lazy" />
+                                    </div>
+                                @else
+                                    <div class="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary-500 to-gold-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                                        {{ mb_substr($shop->name, 0, 1) }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="p-4 sm:p-5 pt-10 sm:pt-11">
+                            <div class="font-semibold text-secondary-900 dark:text-secondary-50 truncate">{{ $shop->name }}</div>
+                            <div class="mt-1 text-sm text-secondary-600 dark:text-secondary-300 truncate">
                                 {{ $shop->category?->name }}{{ $shop->floorRelation ? ' • ' . $shop->floorRelation->name : '' }}
                             </div>
                             @if ($shop->description)

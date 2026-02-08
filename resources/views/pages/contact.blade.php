@@ -46,7 +46,12 @@
                         <div>{{ \App\Models\Setting::getValue('mall_contact_address', app()->getLocale() === 'ar' ? config('mall.contact.address_ar') : config('mall.contact.address_en')) }}</div>
                         <div>{{ \App\Models\Setting::getValue('mall_contact_phone', config('mall.contact.phone')) }}</div>
                         <div><a class="text-primary-700 hover:text-primary-800" href="mailto:{{ \App\Models\Setting::getValue('mall_contact_email', config('mall.contact.email')) }}">{{ \App\Models\Setting::getValue('mall_contact_email', config('mall.contact.email')) }}</a></div>
-                        <div><a class="text-primary-700 hover:text-primary-800" href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::getValue('mall_contact_whatsapp', config('mall.contact.whatsapp'))) }}" target="_blank" rel="noreferrer">WhatsApp</a></div>
+                        @php
+                            $whatsappDigits = \App\Models\Setting::normalizeWhatsappPhone(\App\Models\Setting::getValue('mall_contact_whatsapp', config('mall.contact.whatsapp')));
+                        @endphp
+                        @if ($whatsappDigits)
+                            <div><a class="text-primary-700 hover:text-primary-800" href="https://wa.me/{{ $whatsappDigits }}" target="_blank" rel="noreferrer">WhatsApp</a></div>
+                        @endif
                     </div>
                 </div>
                 <div class="card overflow-hidden">

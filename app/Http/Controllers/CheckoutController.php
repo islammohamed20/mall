@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewOrderForShop;
 use App\Models\CheckoutOrder;
 use App\Models\PaymentMethod;
 use App\Models\Product;
+use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
@@ -114,6 +117,7 @@ class CheckoutController extends Controller
                 'quantity' => (int) $quantity,
                 'subtotal' => $product->price ? (float) $product->price * $quantity : 0,
                 'shop' => $product->shop?->name,
+                'shop_id' => $product->shop_id,
             ];
         })->filter()->values();
 
@@ -129,7 +133,7 @@ class CheckoutController extends Controller
             ]);
         }
 
-        CheckoutOrder::create([
+        $order = CheckoutOrder::create([
             'user_id' => $user->id,
             'payment_method_id' => $paymentMethod->id,
             'payment_type' => $paymentMethod->type,
@@ -150,6 +154,47 @@ class CheckoutController extends Controller
             'currency' => $currency,
             'status' => 'pending',
         ]);
+
+        $shopIds = collect($cartItems)
+            ->pluck('shop_id')
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($shopIds->isNotEmpty()) {
+            $shops = Shop::query()
+                ->whereIn('id', $shopIds)
+                ->get()
+                ->keyBy('id');
+
+            foreach ($shopIds as $shopId) {
+                $shop = $shops->get($shopId);
+                if (! $shop) {
+                    continue;
+                }
+
+                $toEmail = $shop->owner_email ?: $shop->email;
+                if (! $toEmail) {
+                    continue;
+                }
+
+                $itemsForShop = collect($cartItems)
+                    ->where('shop_id', $shopId)
+                    ->map(function (array $item) {
+                        unset($item['shop_id']);
+
+                        return $item;
+                    })
+                    ->values()
+                    ->all();
+
+                try {
+                    Mail::to($toEmail)->send(new NewOrderForShop($order, $shop, $itemsForShop));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
+        }
 
         $request->session()->forget('cart');
 

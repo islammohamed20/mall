@@ -108,6 +108,10 @@ html {
     .form-input {
         @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-secondary-900 dark:bg-secondary-950 dark:border-secondary-800 dark:text-secondary-100 placeholder:text-secondary-400 dark:placeholder:text-secondary-500;
     }
+
+    .input-field {
+        @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-secondary-900 dark:bg-secondary-950 dark:border-secondary-800 dark:text-secondary-100 placeholder:text-secondary-400 dark:placeholder:text-secondary-500;
+    }
     
     .form-label {
         @apply block text-sm font-medium text-secondary-700 mb-2 dark:text-secondary-200;
@@ -132,6 +136,26 @@ html {
     
     .admin-card {
         @apply bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-secondary-950 dark:border-secondary-800;
+    }
+
+    .admin-table {
+        @apply min-w-full text-sm;
+    }
+
+    .admin-table thead {
+        @apply bg-gray-50 text-secondary-700 dark:bg-secondary-900 dark:text-secondary-200;
+    }
+
+    .admin-table th {
+        @apply px-5 py-3 text-start font-semibold whitespace-nowrap;
+    }
+
+    .admin-table tbody {
+        @apply divide-y divide-gray-100 dark:divide-secondary-800;
+    }
+
+    .admin-table td {
+        @apply px-5 py-3 align-middle;
     }
     
     .badge {
@@ -303,5 +327,408 @@ html {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════
+   SEASONAL THEMES — Rich decorative system
+   ═══════════════════════════════════════════════════ */
+
+/* ── Base theme scaffold ────────────────────────── */
+body.season-theme {
+    position: relative;
+}
+
+body.season-theme > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ambient overlay (subtle background glow) */
+body.season-theme::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.18;
+    background-image:
+        radial-gradient(ellipse at 15% 5%, var(--st-glow-1, rgba(13,148,136,.5)), transparent 40%),
+        radial-gradient(ellipse at 85% 15%, var(--st-glow-2, rgba(245,158,11,.4)), transparent 40%),
+        radial-gradient(ellipse at 50% 90%, var(--st-glow-3, rgba(34,197,94,.35)), transparent 50%);
+}
+
+/* Floating particles layer (CSS-only animation) */
+body.season-theme::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: var(--st-particles, none);
+    background-size: var(--st-particle-size, 6px 6px);
+    animation: seasonFloat 25s linear infinite;
+    opacity: var(--st-particle-opacity, 0);
+}
+
+@keyframes seasonFloat {
+    0%   { background-position: 0 0, 40px 60px, 80px 20px; }
+    100% { background-position: 0 800px, 40px 860px, 80px 820px; }
+}
+
+/* ── Greeting banner ─────────────────────────────── */
+.season-banner {
+    position: relative;
+    overflow: hidden;
+}
+
+.season-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.08) 50%, rgba(255,255,255,0) 100%);
+    animation: bannerShimmer 3s ease-in-out infinite;
+}
+
+@keyframes bannerShimmer {
+    0%, 100% { transform: translateX(-100%); }
+    50%      { transform: translateX(100%); }
+}
+
+.season-banner-text {
+    animation: bannerPulse 3s ease-in-out infinite;
+}
+
+@keyframes bannerPulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.02); }
+}
+
+/* ═══════════════════════════════════════════════════
+   RAMADAN — Teal/Gold with floating crescents
+   ═══════════════════════════════════════════════════ */
+body.season-theme-ramadan {
+    --st-glow-1: rgba(13, 148, 136, 0.55);
+    --st-glow-2: rgba(245, 158, 11, 0.45);
+    --st-glow-3: rgba(6, 95, 70, 0.30);
+    --st-particle-opacity: 0.25;
+    --st-particles:
+        radial-gradient(circle 3px, rgba(245,158,11,.6) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(13,148,136,.5) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(253,224,71,.5) 100%, transparent 100%);
+    --st-particle-size: 6px 6px, 5px 5px, 4px 4px;
+}
+
+body.season-theme-ramadan header {
+    background-color: rgba(13, 148, 136, 0.06) !important;
+    border-bottom-color: rgba(13, 148, 136, 0.25) !important;
+}
+
+body.season-theme-ramadan .gradient-text {
+    background-image: linear-gradient(135deg, #0d9488, #f59e0b) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+}
+
+body.season-theme-ramadan .btn-primary {
+    background: linear-gradient(135deg, #0d9488, #0f766e) !important;
+}
+
+body.season-theme-ramadan .btn-primary:hover {
+    background: linear-gradient(135deg, #0f766e, #115e59) !important;
+}
+
+body.season-theme-ramadan .btn-gold {
+    background: linear-gradient(135deg, #0d9488, #f59e0b) !important;
+}
+
+body.season-theme-ramadan .btn-gold:hover {
+    background: linear-gradient(135deg, #0f766e, #d97706) !important;
+}
+
+body.season-theme-ramadan .btn-white {
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+
+body.season-theme-ramadan .hero-overlay {
+    background: linear-gradient(135deg, rgba(6, 95, 70, 0.90) 0%, rgba(13, 148, 136, 0.70) 55%, rgba(245, 158, 11, 0.35) 100%) !important;
+}
+
+body.season-theme-ramadan .section-title {
+    position: relative;
+}
+
+body.season-theme-ramadan .section-title::after {
+    content: '';
+    display: block;
+    width: 90px;
+    height: 4px;
+    margin-top: 10px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #0d9488, #f59e0b);
+    opacity: 0.9;
+}
+
+body.season-theme-ramadan .ramadan-hero-decor {
+    opacity: 0.95;
+    mix-blend-mode: screen;
+}
+
+body.season-theme-ramadan .ramadan-float {
+    animation: ramadanFloat 7.5s ease-in-out infinite;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 14px 30px rgba(0, 0, 0, 0.25));
+}
+
+body.season-theme-ramadan .ramadan-drift {
+    animation: ramadanDrift 10.5s ease-in-out infinite;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 14px 30px rgba(0, 0, 0, 0.22));
+}
+
+body.season-theme-ramadan .ramadan-twinkle {
+    animation: ramadanTwinkle 2.8s ease-in-out infinite;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.18));
+}
+
+@keyframes ramadanFloat {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); opacity: 0.78; }
+    50% { transform: translate3d(0, -14px, 0) rotate(3deg); opacity: 1; }
+}
+
+@keyframes ramadanDrift {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0.7; }
+    50% { transform: translate3d(18px, -10px, 0) rotate(6deg); opacity: 1; }
+}
+
+@keyframes ramadanTwinkle {
+    0%, 100% { transform: scale(0.9); opacity: 0.25; }
+    50% { transform: scale(1.25); opacity: 0.85; }
+}
+
+@media (max-width: 640px) {
+    body.season-theme::after {
+        animation: none !important;
+        opacity: 0.08 !important;
+    }
+
+    body.season-theme-ramadan .ramadan-hero-decor {
+        opacity: 0.75;
+        mix-blend-mode: normal;
+    }
+
+    body.season-theme-ramadan .ramadan-float,
+    body.season-theme-ramadan .ramadan-drift,
+    body.season-theme-ramadan .ramadan-twinkle {
+        filter: none;
+    }
+}
+
+body.season-theme-ramadan footer {
+    background-color: rgba(6, 95, 70, 0.06) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   EID AL-FITR — Festive green/blue/gold confetti
+   ═══════════════════════════════════════════════════ */
+body.season-theme-eid-fitr {
+    --st-glow-1: rgba(16, 185, 129, 0.50);
+    --st-glow-2: rgba(56, 189, 248, 0.35);
+    --st-glow-3: rgba(245, 158, 11, 0.30);
+    --st-particle-opacity: 0.35;
+    --st-particles:
+        radial-gradient(circle 3px, rgba(16,185,129,.7) 100%, transparent 100%),
+        radial-gradient(circle 3px, rgba(245,158,11,.6) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(56,189,248,.5) 100%, transparent 100%);
+    --st-particle-size: 7px 7px, 6px 6px, 5px 5px;
+}
+
+body.season-theme-eid-fitr header {
+    background-color: rgba(16, 185, 129, 0.06) !important;
+    border-bottom-color: rgba(16, 185, 129, 0.25) !important;
+}
+
+body.season-theme-eid-fitr .btn-primary {
+    background: linear-gradient(135deg, #10b981, #0ea5e9) !important;
+}
+
+body.season-theme-eid-fitr .btn-primary:hover {
+    background: linear-gradient(135deg, #059669, #0284c7) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   EID AL-ADHA — Warm amber/gold/purple
+   ═══════════════════════════════════════════════════ */
+body.season-theme-eid-adha {
+    --st-glow-1: rgba(245, 158, 11, 0.50);
+    --st-glow-2: rgba(168, 85, 247, 0.30);
+    --st-glow-3: rgba(234, 88, 12, 0.25);
+    --st-particle-opacity: 0.30;
+    --st-particles:
+        radial-gradient(circle 3px, rgba(245,158,11,.7) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(168,85,247,.5) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(253,224,71,.5) 100%, transparent 100%);
+    --st-particle-size: 6px 6px, 5px 5px, 4px 4px;
+}
+
+body.season-theme-eid-adha header {
+    background-color: rgba(245, 158, 11, 0.06) !important;
+    border-bottom-color: rgba(245, 158, 11, 0.25) !important;
+}
+
+body.season-theme-eid-adha .btn-primary {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   HIJRI NEW YEAR — Indigo/purple
+   ═══════════════════════════════════════════════════ */
+body.season-theme-hijri-new-year {
+    --st-glow-1: rgba(99, 102, 241, 0.50);
+    --st-glow-2: rgba(168, 85, 247, 0.35);
+    --st-glow-3: rgba(79, 70, 229, 0.25);
+    --st-particle-opacity: 0.22;
+    --st-particles:
+        radial-gradient(circle 2px, rgba(99,102,241,.6) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(168,85,247,.5) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(196,181,253,.5) 100%, transparent 100%);
+    --st-particle-size: 5px 5px, 4px 4px, 3px 3px;
+}
+
+body.season-theme-hijri-new-year header {
+    background-color: rgba(99, 102, 241, 0.06) !important;
+    border-bottom-color: rgba(99, 102, 241, 0.25) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   MAWLID — Green / emerald
+   ═══════════════════════════════════════════════════ */
+body.season-theme-mawlid {
+    --st-glow-1: rgba(22, 163, 74, 0.50);
+    --st-glow-2: rgba(16, 185, 129, 0.35);
+    --st-glow-3: rgba(34, 197, 94, 0.25);
+    --st-particle-opacity: 0.22;
+    --st-particles:
+        radial-gradient(circle 2px, rgba(22,163,74,.6) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(16,185,129,.5) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(74,222,128,.4) 100%, transparent 100%);
+    --st-particle-size: 5px 5px, 4px 4px, 3px 3px;
+}
+
+body.season-theme-mawlid header {
+    background-color: rgba(22, 163, 74, 0.06) !important;
+    border-bottom-color: rgba(22, 163, 74, 0.25) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   NATIONAL (Egypt) — Red/White/Black stripes
+   ═══════════════════════════════════════════════════ */
+body.season-theme-national {
+    --st-glow-1: rgba(239, 68, 68, 0.40);
+    --st-glow-2: rgba(255, 255, 255, 0.15);
+    --st-glow-3: rgba(0, 0, 0, 0.12);
+    --st-particle-opacity: 0.22;
+    --st-particles:
+        radial-gradient(circle 2px, rgba(239,68,68,.6) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(34,197,94,.4) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(0,0,0,.3) 100%, transparent 100%);
+    --st-particle-size: 5px 5px, 4px 4px, 3px 3px;
+}
+
+body.season-theme-national header {
+    background-color: rgba(239, 68, 68, 0.04) !important;
+    border-bottom-color: rgba(239, 68, 68, 0.20) !important;
+}
+
+/* October 6 special gold eagle accent */
+body.season-theme-october6 header {
+    background-color: rgba(217, 119, 6, 0.06) !important;
+    border-bottom-color: rgba(217, 119, 6, 0.25) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   NEW YEAR — Purple/fuchsia sparkles
+   ═══════════════════════════════════════════════════ */
+body.season-theme-new-year {
+    --st-glow-1: rgba(124, 58, 237, 0.45);
+    --st-glow-2: rgba(217, 70, 239, 0.35);
+    --st-glow-3: rgba(245, 158, 11, 0.25);
+    --st-particle-opacity: 0.35;
+    --st-particles:
+        radial-gradient(circle 3px, rgba(124,58,237,.7) 100%, transparent 100%),
+        radial-gradient(circle 3px, rgba(245,158,11,.6) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(217,70,239,.5) 100%, transparent 100%);
+    --st-particle-size: 7px 7px, 6px 6px, 5px 5px;
+}
+
+body.season-theme-new-year header {
+    background-color: rgba(124, 58, 237, 0.06) !important;
+    border-bottom-color: rgba(124, 58, 237, 0.25) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   MOTHER'S DAY — Pink / rose
+   ═══════════════════════════════════════════════════ */
+body.season-theme-mothers-day {
+    --st-glow-1: rgba(236, 72, 153, 0.50);
+    --st-glow-2: rgba(244, 114, 182, 0.35);
+    --st-glow-3: rgba(251, 113, 133, 0.25);
+    --st-particle-opacity: 0.30;
+    --st-particles:
+        radial-gradient(circle 3px, rgba(236,72,153,.6) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(244,114,182,.5) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(251,207,232,.5) 100%, transparent 100%);
+    --st-particle-size: 6px 6px, 5px 5px, 4px 4px;
+}
+
+body.season-theme-mothers-day header {
+    background-color: rgba(236, 72, 153, 0.06) !important;
+    border-bottom-color: rgba(236, 72, 153, 0.25) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   VALENTINE'S — Red / pink hearts
+   ═══════════════════════════════════════════════════ */
+body.season-theme-valentines {
+    --st-glow-1: rgba(239, 68, 68, 0.50);
+    --st-glow-2: rgba(236, 72, 153, 0.40);
+    --st-glow-3: rgba(251, 113, 133, 0.30);
+    --st-particle-opacity: 0.30;
+    --st-particles:
+        radial-gradient(circle 3px, rgba(239,68,68,.6) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(236,72,153,.5) 100%, transparent 100%),
+        radial-gradient(circle 2px, rgba(251,113,133,.5) 100%, transparent 100%);
+    --st-particle-size: 6px 6px, 5px 5px, 4px 4px;
+}
+
+body.season-theme-valentines header {
+    background-color: rgba(239, 68, 68, 0.06) !important;
+    border-bottom-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   Dark mode adjustments (slightly stronger glows)
+   ═══════════════════════════════════════════════════ */
+.dark body.season-theme::before {
+    opacity: 0.25;
+}
+
+/* ═══════════════════════════════════════════════════
+   Reduced motion — disable particles & animations
+   ═══════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    body.season-theme::after {
+        animation: none !important;
+        opacity: 0 !important;
+    }
+    .season-banner::before {
+        animation: none !important;
+    }
+    .season-banner-text {
+        animation: none !important;
+    }
+    body.season-theme-ramadan .ramadan-hero-decor * {
+        animation: none !important;
     }
 }

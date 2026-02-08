@@ -258,6 +258,27 @@
                 </div>
             </div>
 
+            <div class="space-y-4" x-data="{ monitorEmail: @js($values['admin_monitor_email']['ar'] ?? ''), popupEnabled: @js($values['admin_popup_enabled']['ar'] ?? '1') }">
+                <div class="text-lg font-semibold text-secondary-900 dark:text-secondary-50">{{ app()->getLocale() === 'ar' ? 'مراقبة الأدمن' : 'Admin Monitoring' }}</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">{{ app()->getLocale() === 'ar' ? 'إيميل متابعة الأدمن' : 'Admin monitor email' }}</label>
+                        <input class="form-input" name="admin_monitor_email[ar]" x-model="monitorEmail" placeholder="admin@example.com" />
+                        <input type="hidden" name="admin_monitor_email[en]" x-model="monitorEmail" />
+                        @error('admin_monitor_email.ar') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+                    </div>
+                    <div>
+                        <label class="form-label">{{ app()->getLocale() === 'ar' ? 'Popups داخل لوحة التحكم' : 'Admin popup notifications' }}</label>
+                        <select class="form-input" name="admin_popup_enabled[ar]" x-model="popupEnabled">
+                            <option value="1">{{ app()->getLocale() === 'ar' ? 'مفعل' : 'Enabled' }}</option>
+                            <option value="0">{{ app()->getLocale() === 'ar' ? 'معطل' : 'Disabled' }}</option>
+                        </select>
+                        <input type="hidden" name="admin_popup_enabled[en]" x-model="popupEnabled" />
+                        @error('admin_popup_enabled.ar') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+                    </div>
+                </div>
+            </div>
+
             <button class="btn-primary" type="submit">{{ app()->getLocale() === 'ar' ? 'حفظ' : 'Save' }}</button>
         </form>
     </div>

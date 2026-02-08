@@ -48,7 +48,9 @@
             })();
         </script>
         <title>{{ $title ?? 'Admin' }} - {{ app()->getLocale() === 'ar' ? config('mall.name.ar') : config('mall.name.en') }}</title>
-        @php($faviconPath = \App\Models\Setting::getValue('mall_favicon'))
+        @php
+            $faviconPath = \App\Models\Setting::getValue('mall_favicon');
+        @endphp
         @if ($faviconPath)
             <link rel="icon" href="{{ asset('storage/'.$faviconPath) }}">
         @endif
@@ -57,7 +59,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     </head>
-    <body class="min-h-screen bg-gray-100 text-secondary-900 dark:bg-secondary-950 dark:text-secondary-100">
+    <body class="min-h-screen bg-gray-100 text-secondary-900 dark:bg-secondary-950 dark:text-secondary-100 {{ $seasonThemeBodyClass ?? '' }}">
         <div class="min-h-screen flex" x-data="{ sidebarOpen: false }" x-init="$watch('sidebarOpen', value => document.body.classList.toggle('overflow-hidden', value))">
             <aside class="w-64 bg-white border-e border-gray-200 hidden lg:block dark:bg-secondary-950 dark:border-secondary-800">
                 <div class="px-6 py-5 border-b border-gray-200 dark:border-secondary-800">
@@ -141,9 +143,18 @@
                     <a href="{{ route('admin.settings.edit') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.settings.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
                         {{ app()->getLocale() === 'ar' ? 'إعدادات الموقع' : 'Site Settings' }}
                     </a>
+                    <a href="{{ route('admin.themes.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.themes.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
+                        {{ app()->getLocale() === 'ar' ? 'ثيمات المناسبات' : 'Seasonal Themes' }}
+                    </a>
                     <a href="{{ route('admin.email.edit') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.email.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         {{ app()->getLocale() === 'ar' ? 'البريد الإلكتروني' : 'Email Settings' }}
+                    </a>
+                    <a href="{{ route('admin.emails.outbox.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.emails.outbox.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
+                        {{ app()->getLocale() === 'ar' ? 'Outbox البريد' : 'Email Outbox' }}
+                    </a>
+                    <a href="{{ route('admin.otps.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.otps.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
+                        {{ app()->getLocale() === 'ar' ? 'رموز التحقق (OTPs)' : 'OTPs' }}
                     </a>
                     <a href="{{ route('admin.messages.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.messages.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
                         {{ app()->getLocale() === 'ar' ? 'الرسائل' : 'Messages' }}
@@ -285,9 +296,18 @@
                             <a href="{{ route('admin.settings.edit') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.settings.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
                                 {{ app()->getLocale() === 'ar' ? 'إعدادات الموقع' : 'Site Settings' }}
                             </a>
+                            <a href="{{ route('admin.themes.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.themes.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
+                                {{ app()->getLocale() === 'ar' ? 'ثيمات المناسبات' : 'Seasonal Themes' }}
+                            </a>
                             <a href="{{ route('admin.email.edit') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.email.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                                 {{ app()->getLocale() === 'ar' ? 'البريد الإلكتروني' : 'Email Settings' }}
+                            </a>
+                            <a href="{{ route('admin.emails.outbox.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.emails.outbox.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
+                                {{ app()->getLocale() === 'ar' ? 'Outbox البريد' : 'Email Outbox' }}
+                            </a>
+                            <a href="{{ route('admin.otps.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.otps.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
+                                {{ app()->getLocale() === 'ar' ? 'رموز التحقق (OTPs)' : 'OTPs' }}
                             </a>
                             <a href="{{ route('admin.messages.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.messages.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
                                 {{ app()->getLocale() === 'ar' ? 'الرسائل' : 'Messages' }}
@@ -297,6 +317,92 @@
                 </div>
 
                 @include('partials.flash')
+
+                @php
+                    $popupsEnabled = \App\Models\Setting::getValue('admin_popup_enabled') !== '0';
+                    $toastItems = collect();
+
+                    if ($popupsEnabled && \Illuminate\Support\Facades\Schema::hasTable('admin_notifications')) {
+                        $toastItems = \App\Models\AdminNotification::query()
+                            ->whereNull('read_at')
+                            ->latest('id')
+                            ->limit(3)
+                            ->get()
+                            ->map(function ($n) {
+                                return [
+                                    'id' => $n->id,
+                                    'level' => $n->level ?? 'info',
+                                    'title' => $n->title ?? $n->type,
+                                    'body' => $n->body,
+                                    'read_url' => route('admin.notifications.read', $n),
+                                ];
+                            })
+                            ->values();
+                    }
+                @endphp
+
+                @if ($popupsEnabled ?? false)
+                    <div
+                        x-data="{
+                            items: @js($toastItems),
+                            status: @js(session('status')),
+                            locale: @js(app()->getLocale()),
+                            init() {
+                                if (this.status) {
+                                    this.items.unshift({
+                                        id: 'session',
+                                        level: 'success',
+                                        title: this.locale === 'ar' ? 'تم' : 'Done',
+                                        body: this.status,
+                                        read_url: null,
+                                    });
+                                }
+                            },
+                            levelClass(level) {
+                                switch (level) {
+                                    case 'success': return 'border-green-200 bg-green-50 text-green-900 dark:border-green-900/40 dark:bg-green-900/20 dark:text-green-100';
+                                    case 'warning': return 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-100';
+                                    case 'error': return 'border-red-200 bg-red-50 text-red-900 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-100';
+                                    default: return 'border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-900/40 dark:bg-blue-900/20 dark:text-blue-100';
+                                }
+                            },
+                            async dismiss(item) {
+                                this.items = this.items.filter(i => i.id !== item.id);
+                                if (!item.read_url) return;
+
+                                const token = document.querySelector('meta[name=csrf-token]')?.getAttribute('content');
+                                try {
+                                    await fetch(item.read_url, {
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': token || '',
+                                            'Accept': 'application/json',
+                                        },
+                                    });
+                                } catch (e) {}
+                            }
+                        }"
+                        x-init="init()"
+                        class="fixed top-4 end-4 z-50 w-[22rem] max-w-[calc(100vw-2rem)] space-y-3"
+                    >
+                        <template x-for="item in items" :key="item.id">
+                            <div class="rounded-xl border shadow-lg p-4" :class="levelClass(item.level)">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <div class="font-semibold" x-text="item.title"></div>
+                                        <div class="mt-1 text-sm opacity-90 break-words" x-text="item.body"></div>
+                                    </div>
+                                    <button type="button" class="shrink-0 opacity-70 hover:opacity-100" @click="dismiss(item)">
+                                        <span class="sr-only">Dismiss</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                                            <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                @endif
 
                 <main class="flex-1 p-4 lg:p-8">
                     @yield('content')
