@@ -50,6 +50,12 @@ class UpdateShopRequest extends FormRequest
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'logo' => ['nullable', 'image', 'max:2048'],
             'cover_image' => ['nullable', 'image', 'max:4096'],
+            'cart_enabled' => ['nullable', 'boolean'],
+            'cart_min_order_amount' => ['nullable', 'integer', 'min:0'],
+            'cart_max_items' => ['nullable', 'integer', 'min:1'],
+            'cart_allow_gift_message' => ['nullable', 'boolean'],
+            'cart_allow_coupon' => ['nullable', 'boolean'],
+            'cart_abandoned_timeout_minutes' => ['nullable', 'integer', 'min:5'],
         ];
     }
 }

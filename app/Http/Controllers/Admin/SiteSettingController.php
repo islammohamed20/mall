@@ -33,6 +33,17 @@ class SiteSettingController extends Controller
         // Admin monitoring
         'admin_monitor_email',
         'admin_popup_enabled',
+
+        // Cart Settings
+        'cart_min_order_value',
+        'cart_max_order_value',
+        'cart_enable_guest_checkout',
+        'cart_session_timeout',
+        'cart_return_policy_ar',
+        'cart_return_policy_en',
+        'cart_free_shipping_threshold',
+        'cart_enable_coupon',
+        'cart_enable_gift_wrap',
     ];
 
     public function edit()
@@ -65,6 +76,17 @@ class SiteSettingController extends Controller
 
             'admin_monitor_email' => ['ar' => '', 'en' => ''],
             'admin_popup_enabled' => ['ar' => '1', 'en' => '1'],
+
+            // Cart Settings
+            'cart_min_order_value' => ['ar' => '0', 'en' => '0'],
+            'cart_max_order_value' => ['ar' => '999999', 'en' => '999999'],
+            'cart_enable_guest_checkout' => ['ar' => '1', 'en' => '1'],
+            'cart_session_timeout' => ['ar' => '120', 'en' => '120'],
+            'cart_return_policy_ar' => ['ar' => '', 'en' => ''],
+            'cart_return_policy_en' => ['ar' => '', 'en' => ''],
+            'cart_free_shipping_threshold' => ['ar' => '500', 'en' => '500'],
+            'cart_enable_coupon' => ['ar' => '1', 'en' => '1'],
+            'cart_enable_gift_wrap' => ['ar' => '1', 'en' => '1'],
         ];
 
         $values = [];
@@ -122,6 +144,26 @@ class SiteSettingController extends Controller
             'admin_monitor_email.en' => ['nullable', 'email', 'max:255'],
             'admin_popup_enabled.ar' => ['nullable', 'in:0,1'],
             'admin_popup_enabled.en' => ['nullable', 'in:0,1'],
+
+            // Cart Settings Validation
+            'cart_min_order_value.ar' => ['nullable', 'numeric', 'min:0'],
+            'cart_min_order_value.en' => ['nullable', 'numeric', 'min:0'],
+            'cart_max_order_value.ar' => ['nullable', 'numeric', 'min:0'],
+            'cart_max_order_value.en' => ['nullable', 'numeric', 'min:0'],
+            'cart_enable_guest_checkout.ar' => ['nullable', 'in:0,1'],
+            'cart_enable_guest_checkout.en' => ['nullable', 'in:0,1'],
+            'cart_session_timeout.ar' => ['nullable', 'integer', 'min:1'],
+            'cart_session_timeout.en' => ['nullable', 'integer', 'min:1'],
+            'cart_return_policy_ar.ar' => ['nullable', 'string', 'max:5000'],
+            'cart_return_policy_ar.en' => ['nullable', 'string', 'max:5000'],
+            'cart_return_policy_en.ar' => ['nullable', 'string', 'max:5000'],
+            'cart_return_policy_en.en' => ['nullable', 'string', 'max:5000'],
+            'cart_free_shipping_threshold.ar' => ['nullable', 'numeric', 'min:0'],
+            'cart_free_shipping_threshold.en' => ['nullable', 'numeric', 'min:0'],
+            'cart_enable_coupon.ar' => ['nullable', 'in:0,1'],
+            'cart_enable_coupon.en' => ['nullable', 'in:0,1'],
+            'cart_enable_gift_wrap.ar' => ['nullable', 'in:0,1'],
+            'cart_enable_gift_wrap.en' => ['nullable', 'in:0,1'],
         ]);
 
         $fileKeys = ['mall_logo', 'mall_favicon'];

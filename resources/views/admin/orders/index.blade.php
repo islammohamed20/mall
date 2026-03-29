@@ -2,9 +2,9 @@
 
 @section('content')
     <div class="space-y-6">
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div class="flex flex-col gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-secondary-900 dark:text-secondary-50">
+                <h1 class="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-50">
                     {{ app()->getLocale() === 'ar' ? 'إدارة الطلبات' : 'Orders Management' }}
                 </h1>
                 <p class="mt-2 text-secondary-700 dark:text-secondary-200">
@@ -14,11 +14,11 @@
         </div>
 
         {{-- Filters --}}
-        <div class="admin-card p-5">
-            <form method="GET" class="flex flex-wrap items-end gap-4">
-                <div>
-                    <label class="block text-sm font-medium mb-1">{{ app()->getLocale() === 'ar' ? 'الحالة' : 'Status' }}</label>
-                    <select name="status" class="input-field">
+        <div class="admin-card p-3 sm:p-5">
+            <form method="GET" class="flex flex-col sm:flex-row sm:items-end gap-4">
+                <div class="flex-1">
+                    <label class="block text-xs sm:text-sm font-medium mb-1">{{ app()->getLocale() === 'ar' ? 'الحالة' : 'Status' }}</label>
+                    <select name="status" class="input-field text-sm">
                         <option value="">{{ app()->getLocale() === 'ar' ? 'الكل' : 'All' }}</option>
                         <option value="pending" {{ $status == 'pending' ? 'selected' : '' }}>{{ app()->getLocale() === 'ar' ? 'معلق' : 'Pending' }}</option>
                         <option value="processing" {{ $status == 'processing' ? 'selected' : '' }}>{{ app()->getLocale() === 'ar' ? 'قيد التنفيذ' : 'Processing' }}</option>
@@ -26,38 +26,40 @@
                         <option value="cancelled" {{ $status == 'cancelled' ? 'selected' : '' }}>{{ app()->getLocale() === 'ar' ? 'ملغي' : 'Cancelled' }}</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-1">{{ app()->getLocale() === 'ar' ? 'طريقة الدفع' : 'Payment Type' }}</label>
-                    <select name="payment_type" class="input-field">
+                <div class="flex-1">
+                    <label class="block text-xs sm:text-sm font-medium mb-1">{{ app()->getLocale() === 'ar' ? 'طريقة الدفع' : 'Payment Type' }}</label>
+                    <select name="payment_type" class="input-field text-sm">
                         <option value="">{{ app()->getLocale() === 'ar' ? 'الكل' : 'All' }}</option>
                         <option value="cod" {{ $paymentType == 'cod' ? 'selected' : '' }}>{{ app()->getLocale() === 'ar' ? 'دفع عند الاستلام' : 'COD' }}</option>
                         <option value="card" {{ $paymentType == 'card' ? 'selected' : '' }}>{{ app()->getLocale() === 'ar' ? 'بطاقة' : 'Card' }}</option>
                     </select>
                 </div>
-                <button type="submit" class="btn-primary">
-                    {{ app()->getLocale() === 'ar' ? 'بحث' : 'Search' }}
-                </button>
-                <a href="{{ route('admin.orders.index') }}" class="btn-secondary">
-                    {{ app()->getLocale() === 'ar' ? 'إعادة تعيين' : 'Reset' }}
-                </a>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn-primary flex-1 sm:flex-none text-sm px-3 py-2">
+                        {{ app()->getLocale() === 'ar' ? 'بحث' : 'Search' }}
+                    </button>
+                    <a href="{{ route('admin.orders.index') }}" class="btn-secondary flex-1 sm:flex-none text-sm px-3 py-2 text-center">
+                        {{ app()->getLocale() === 'ar' ? 'إعادة تعيين' : 'Reset' }}
+                    </a>
+                </div>
             </form>
         </div>
 
         {{-- Orders Table --}}
         <div class="admin-card overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="admin-table">
-                    <thead>
+                <table class="min-w-full text-xs sm:text-sm admin-table">
+                    <thead class="bg-gray-50 text-secondary-700 dark:bg-secondary-900 dark:text-secondary-200">
                         <tr>
-                            <th>#</th>
-                            <th>{{ app()->getLocale() === 'ar' ? 'العميل' : 'Customer' }}</th>
-                            <th>{{ app()->getLocale() === 'ar' ? 'البريد' : 'Email' }}</th>
-                            <th>{{ app()->getLocale() === 'ar' ? 'الهاتف' : 'Phone' }}</th>
-                            <th>{{ app()->getLocale() === 'ar' ? 'طريقة الدفع' : 'Payment' }}</th>
-                            <th>{{ app()->getLocale() === 'ar' ? 'المبلغ' : 'Amount' }}</th>
-                            <th>{{ app()->getLocale() === 'ar' ? 'الحالة' : 'Status' }}</th>
-                            <th>{{ app()->getLocale() === 'ar' ? 'التاريخ' : 'Date' }}</th>
-                            <th>{{ app()->getLocale() === 'ar' ? 'إجراءات' : 'Actions' }}</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold hidden md:table-cell">#</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'العميل' : 'Customer' }}</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold hidden lg:table-cell">{{ app()->getLocale() === 'ar' ? 'البريد' : 'Email' }}</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold hidden sm:table-cell">{{ app()->getLocale() === 'ar' ? 'الهاتف' : 'Phone' }}</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold hidden md:table-cell">{{ app()->getLocale() === 'ar' ? 'طريقة الدفع' : 'Payment' }}</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'المبلغ' : 'Amount' }}</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'الحالة' : 'Status' }}</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold hidden lg:table-cell">{{ app()->getLocale() === 'ar' ? 'التاريخ' : 'Date' }}</th>
+                            <th class="text-end px-2 sm:px-3 lg:px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'إجراءات' : 'Actions' }}</th>
                         </tr>
                     </thead>
                     <tbody>

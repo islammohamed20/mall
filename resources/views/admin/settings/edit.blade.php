@@ -1,15 +1,15 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="max-w-5xl space-y-6">
-        <div class="flex items-end justify-between gap-4">
+    <div class="max-w-5xl space-y-6 admin-content">
+        <div class="flex flex-col gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-secondary-900 dark:text-secondary-50">{{ app()->getLocale() === 'ar' ? 'إعدادات الموقع' : 'Site Settings' }}</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-50">{{ app()->getLocale() === 'ar' ? 'إعدادات الموقع' : 'Site Settings' }}</h1>
                 <p class="mt-2 text-secondary-700 dark:text-secondary-200">{{ app()->getLocale() === 'ar' ? 'تحديث بيانات المول وروابط التواصل والمحتوى الظاهر في الموقع.' : 'Update mall info, social links, and content shown publicly.' }}</p>
             </div>
         </div>
 
-        <form class="admin-card p-6 space-y-8" method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
+        <form class="admin-card p-3 sm:p-6 space-y-6 sm:space-y-8" method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -276,6 +276,75 @@
                         <input type="hidden" name="admin_popup_enabled[en]" x-model="popupEnabled" />
                         @error('admin_popup_enabled.ar') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
                     </div>
+                </div>
+            </div>
+
+            {{-- Cart Settings Section --}}
+            <div class="space-y-4">
+                <div class="text-lg font-semibold text-secondary-900 dark:text-secondary-50">{{ app()->getLocale() === 'ar' ? '⚙️ إعدادات سلة التسوق' : '⚙️ Cart Settings' }}</div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">{{ app()->getLocale() === 'ar' ? 'الحد الأدنى للطلب (ج.م)' : 'Minimum Order Value (EGP)' }}</label>
+                        <input type="number" step="0.01" class="form-input" name="cart_min_order_value[ar]" value="{{ $values['cart_min_order_value']['ar'] }}" />
+                        <input type="hidden" name="cart_min_order_value[en]" value="{{ $values['cart_min_order_value']['ar'] }}" />
+                        @error('cart_min_order_value.ar') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+                    </div>
+                    <div>
+                        <label class="form-label">{{ app()->getLocale() === 'ar' ? 'الحد الأقصى للطلب (ج.م)' : 'Maximum Order Value (EGP)' }}</label>
+                        <input type="number" step="0.01" class="form-input" name="cart_max_order_value[ar]" value="{{ $values['cart_max_order_value']['ar'] }}" />
+                        <input type="hidden" name="cart_max_order_value[en]" value="{{ $values['cart_max_order_value']['ar'] }}" />
+                        @error('cart_max_order_value.ar') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">{{ app()->getLocale() === 'ar' ? 'حد التوصيل المجاني (ج.م)' : 'Free Shipping Threshold (EGP)' }}</label>
+                        <input type="number" step="0.01" class="form-input" name="cart_free_shipping_threshold[ar]" value="{{ $values['cart_free_shipping_threshold']['ar'] }}" />
+                        <input type="hidden" name="cart_free_shipping_threshold[en]" value="{{ $values['cart_free_shipping_threshold']['ar'] }}" />
+                        <p class="text-sm text-secondary-500 dark:text-secondary-400 mt-1">{{ app()->getLocale() === 'ar' ? 'الطلبات التي تزيد عن هذا المبلغ تحصل على توصيل مجاني' : 'Orders above this amount get free shipping' }}</p>
+                        @error('cart_free_shipping_threshold.ar') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+                    </div>
+                    <div>
+                        <label class="form-label">{{ app()->getLocale() === 'ar' ? 'مهلة الجلسة (دقيقة)' : 'Session Timeout (minutes)' }}</label>
+                        <input type="number" class="form-input" name="cart_session_timeout[ar]" value="{{ $values['cart_session_timeout']['ar'] }}" min="1" />
+                        <input type="hidden" name="cart_session_timeout[en]" value="{{ $values['cart_session_timeout']['ar'] }}" />
+                        <p class="text-sm text-secondary-500 dark:text-secondary-400 mt-1">{{ app()->getLocale() === 'ar' ? 'مدة صلاحية الجلسة قبل انتهائها' : 'Session duration before expiration' }}</p>
+                        @error('cart_session_timeout.ar') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="cart_enable_guest_checkout[ar]" value="1" {{ $values['cart_enable_guest_checkout']['ar'] == '1' ? 'checked' : '' }} class="form-checkbox" />
+                        <input type="hidden" name="cart_enable_guest_checkout[en]" value="{{ $values['cart_enable_guest_checkout']['ar'] }}" />
+                        <span class="text-sm font-medium text-secondary-700 dark:text-secondary-300">{{ app()->getLocale() === 'ar' ? '✓ السماح بالشراء بدون تسجيل' : '✓ Allow Guest Checkout' }}</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="cart_enable_coupon[ar]" value="1" {{ $values['cart_enable_coupon']['ar'] == '1' ? 'checked' : '' }} class="form-checkbox" />
+                        <input type="hidden" name="cart_enable_coupon[en]" value="{{ $values['cart_enable_coupon']['ar'] }}" />
+                        <span class="text-sm font-medium text-secondary-700 dark:text-secondary-300">{{ app()->getLocale() === 'ar' ? '✓ تفعيل الكوبونات' : '✓ Enable Coupons' }}</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="cart_enable_gift_wrap[ar]" value="1" {{ $values['cart_enable_gift_wrap']['ar'] == '1' ? 'checked' : '' }} class="form-checkbox" />
+                        <input type="hidden" name="cart_enable_gift_wrap[en]" value="{{ $values['cart_enable_gift_wrap']['ar'] }}" />
+                        <span class="text-sm font-medium text-secondary-700 dark:text-secondary-300">{{ app()->getLocale() === 'ar' ? '🎁 تفعيل الهدايا الملفوفة' : '🎁 Enable Gift Wrap' }}</span>
+                    </label>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="form-label">{{ app()->getLocale() === 'ar' ? 'سياسة الإرجاع والاسترجاع (عربي)' : 'Return & Exchange Policy (AR)' }}</label>
+                    <textarea class="form-input" name="cart_return_policy_ar[ar]" rows="5" placeholder="{{ app()->getLocale() === 'ar' ? 'أدخل سياسة الإرجاع...' : 'Enter return policy...' }}">{{ $values['cart_return_policy_ar']['ar'] }}</textarea>
+                    <input type="hidden" name="cart_return_policy_ar[en]" value="{{ $values['cart_return_policy_ar']['ar'] }}" />
+                    @error('cart_return_policy_ar.ar') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="space-y-2">
+                    <label class="form-label">{{ app()->getLocale() === 'ar' ? 'سياسة الإرجاع والاسترجاع (English)' : 'Return & Exchange Policy (EN)' }}</label>
+                    <textarea class="form-input" name="cart_return_policy_en[en]" rows="5" placeholder="{{ app()->getLocale() === 'ar' ? 'أدخل سياسة الإرجاع...' : 'Enter return policy...' }}">{{ $values['cart_return_policy_en']['en'] }}</textarea>
+                    <input type="hidden" name="cart_return_policy_en[ar]" value="{{ $values['cart_return_policy_en']['en'] }}" />
+                    @error('cart_return_policy_en.en') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
                 </div>
             </div>
 

@@ -2,24 +2,24 @@
 
 @section('content')
     <div class="space-y-6">
-        <div class="flex items-end justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-secondary-900 dark:text-secondary-50">{{ app()->getLocale() === 'ar' ? 'المحلات' : 'Shops' }}</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-50">{{ app()->getLocale() === 'ar' ? 'المحلات' : 'Shops' }}</h1>
                 <p class="mt-2 text-secondary-700 dark:text-secondary-200">{{ app()->getLocale() === 'ar' ? 'إدارة المحلات.' : 'Manage shops.' }}</p>
             </div>
-            <a class="btn-primary" href="{{ route('admin.shops.create') }}">{{ app()->getLocale() === 'ar' ? 'إضافة' : 'Create' }}</a>
+            <a class="btn-primary w-full sm:w-auto text-center" href="{{ route('admin.shops.create') }}">{{ app()->getLocale() === 'ar' ? 'إضافة' : 'Create' }}</a>
         </div>
 
         <div class="admin-card overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
+                <table class="min-w-full text-xs sm:text-sm admin-table">
                     <thead class="bg-gray-50 text-secondary-700 dark:bg-secondary-900 dark:text-secondary-200">
                         <tr>
-                            <th class="text-start px-5 py-3 font-semibold">#</th>
-                            <th class="text-start px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'المحل' : 'Shop' }}</th>
-                            <th class="text-start px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'التصنيف' : 'Category' }}</th>
-                            <th class="text-start px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'حالة' : 'Status' }}</th>
-                            <th class="text-end px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'إجراءات' : 'Actions' }}</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold hidden sm:table-cell">#</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'المحل' : 'Shop' }}</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold hidden md:table-cell">{{ app()->getLocale() === 'ar' ? 'التصنيف' : 'Category' }}</th>
+                            <th class="text-start px-2 sm:px-3 lg:px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'حالة' : 'Status' }}</th>
+                            <th class="text-end px-2 sm:px-3 lg:px-5 py-3 font-semibold">{{ app()->getLocale() === 'ar' ? 'إجراءات' : 'Actions' }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-secondary-800">

@@ -47,6 +47,15 @@
                 applyTheme(resolveTheme());
             })();
         </script>
+        <script>
+            (function () {
+                try {
+                    if (localStorage.getItem('cookie:consent')) {
+                        document.documentElement.classList.add('cookie-consent-accepted');
+                    }
+                } catch (e) {}
+            })();
+        </script>
         <title>{{ $title ?? \App\Models\Setting::getValue('mall_name', app()->getLocale() === 'ar' ? config('mall.name.ar') : config('mall.name.en')) }}</title>
         @php
             $faviconPath = \App\Models\Setting::getValue('mall_favicon');
@@ -69,6 +78,67 @@
             @yield('content')
         </main>
         @include('partials.footer')
+
+        <div id="cookie-consent-banner" class="fixed bottom-4 left-4 right-4 z-50">
+            <div class="max-w-3xl mx-auto rounded-2xl bg-white/95 dark:bg-secondary-900/95 backdrop-blur border border-gray-200 dark:border-secondary-800 shadow-lg p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <div class="text-sm text-secondary-700 dark:text-secondary-200 leading-relaxed">
+                    {{ app()->getLocale() === 'ar'
+                        ? 'نستخدم ملفات الارتباط (Cookies) لتحسين تجربة الاستخدام وتشغيل بعض الخصائص الأساسية مثل تسجيل الدخول والسلة. بالضغط على "موافق" أنت توافق على استخدامها.'
+                        : 'We use cookies to improve your experience and enable essential features like login and cart. By clicking \"Accept\" you consent to their use.' }}
+                </div>
+                <div class="flex items-center gap-2 sm:shrink-0">
+                    <button type="button" id="cookie-consent-accept" class="btn-primary px-4 py-2 text-sm">
+                        {{ app()->getLocale() === 'ar' ? 'موافق' : 'Accept' }}
+                    </button>
+                    <button type="button" id="cookie-consent-close" class="px-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-secondary-700 text-secondary-700 dark:text-secondary-200 hover:bg-gray-50 dark:hover:bg-secondary-800 transition">
+                        {{ app()->getLocale() === 'ar' ? 'إغلاق' : 'Close' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                const key = 'cookie:consent';
+
+                function hasConsent() {
+                    try {
+                        return !!localStorage.getItem(key);
+                    } catch (e) {
+                        return false;
+                    }
+                }
+
+                const banner = document.getElementById('cookie-consent-banner');
+                if (!banner) return;
+
+                if (hasConsent()) {
+                    banner.remove();
+                    return;
+                }
+
+                const acceptBtn = document.getElementById('cookie-consent-accept');
+                const closeBtn = document.getElementById('cookie-consent-close');
+
+                function hide() {
+                    banner.style.display = 'none';
+                }
+
+                if (acceptBtn) {
+                    acceptBtn.addEventListener('click', function () {
+                        try {
+                            localStorage.setItem(key, 'accepted');
+                        } catch (e) {}
+                        document.documentElement.classList.add('cookie-consent-accepted');
+                        hide();
+                    });
+                }
+
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', hide);
+                }
+            })();
+        </script>
 
         <script>
             (function () {

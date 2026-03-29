@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('ip', 45)->nullable()->index();
             $table->text('user_agent')->nullable();
             $table->string('method', 10)->nullable();
-            $table->string('path', 2048)->index();
+            $table->string('path', 255)->index();
             $table->string('referer', 2048)->nullable();
 
             $table->string('device_type', 20)->nullable()->index();

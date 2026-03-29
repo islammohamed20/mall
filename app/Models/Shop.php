@@ -42,6 +42,12 @@ class Shop extends Model
         'is_featured',
         'is_active',
         'sort_order',
+        'cart_enabled',
+        'cart_min_order_amount',
+        'cart_max_items',
+        'cart_allow_gift_message',
+        'cart_allow_coupon',
+        'cart_abandoned_timeout_minutes',
     ];
 
     protected $casts = [
@@ -50,6 +56,12 @@ class Shop extends Model
         'is_open_now' => 'boolean',
         'sort_order' => 'integer',
         'facebook_page_access_token' => 'encrypted',
+        'cart_enabled' => 'boolean',
+        'cart_min_order_amount' => 'integer',
+        'cart_max_items' => 'integer',
+        'cart_allow_gift_message' => 'boolean',
+        'cart_allow_coupon' => 'boolean',
+        'cart_abandoned_timeout_minutes' => 'integer',
     ];
 
     /**

@@ -10,19 +10,26 @@ use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\FacebookPostController as AdminFacebookPostController;
 use App\Http\Controllers\Admin\FacilityController as AdminFacilityController;
 use App\Http\Controllers\Admin\EmailOutboxController as AdminEmailOutboxController;
+use App\Http\Controllers\Admin\EmailCampaignController as AdminEmailCampaignController;
+use App\Http\Controllers\Admin\EmailTemplateController as AdminEmailTemplateController;
+use App\Http\Controllers\Admin\NewsletterController as AdminNewsletterController;
 use App\Http\Controllers\Admin\OtpController as AdminOtpController;
 use App\Http\Controllers\Admin\FloorController as AdminFloorController;
 use App\Http\Controllers\Admin\OfferController as AdminOfferController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
-use App\Http\Controllers\Admin\PaymentMethodController as AdminPaymentMethodController;
+use App\Http\Controllers\Admin\ProductAttributeController as AdminProductAttributeController;
+use App\Http\Controllers\Admin\SiteSettingController as AdminSiteSettingController;
+use App\Http\Controllers\Admin\ShippingZoneController as AdminShippingZoneController;
 use App\Http\Controllers\Admin\ShopCategoryController as AdminShopCategoryController;
 use App\Http\Controllers\Admin\ShopController as AdminShopController;
 use App\Http\Controllers\Admin\SliderController as AdminSliderController;
-use App\Http\Controllers\Admin\ProductAttributeController as AdminProductAttributeController;
-use App\Http\Controllers\Admin\SiteSettingController as AdminSiteSettingController;
 use App\Http\Controllers\Admin\ThemeController as AdminThemeController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\UnitController as AdminUnitController;
+use App\Http\Controllers\Admin\PaymentMethodController as AdminPaymentMethodController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
@@ -30,12 +37,11 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\UnitController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ShopController;
-use App\Http\Controllers\UnitController;
-use App\Http\Controllers\Admin\UnitController as AdminUnitController;
 use App\Http\Controllers\VisitGeoController;
-use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -169,6 +175,27 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::post('themes/activate', [AdminThemeController::class, 'activate'])->name('themes.activate');
     Route::post('themes/deactivate', [AdminThemeController::class, 'deactivate'])->name('themes.deactivate');
 
+    // Shipping Zones
+    Route::resource('shipping-zones', AdminShippingZoneController::class)->except(['show']);
+
+    // Email Management
+    Route::prefix('newsletter')->name('newsletter.')->group(function () {
+        Route::get('/', [AdminNewsletterController::class, 'index'])->name('index');
+        Route::get('/create', [AdminNewsletterController::class, 'create'])->name('create');
+        Route::post('/', [AdminNewsletterController::class, 'store'])->name('store');
+        Route::delete('/{subscriber}', [AdminNewsletterController::class, 'destroy'])->name('destroy');
+        Route::get('/export', [AdminNewsletterController::class, 'export'])->name('export');
+        Route::post('/{subscriber}/toggle-status', [AdminNewsletterController::class, 'toggleStatus'])->name('toggle-status');
+    });
+
+    Route::resource('email-campaigns', AdminEmailCampaignController::class)->except(['destroy']);
+    Route::delete('email-campaigns/{emailCampaign}', [AdminEmailCampaignController::class, 'destroy'])->name('email-campaigns.destroy');
+    Route::post('email-campaigns/{emailCampaign}/send', [AdminEmailCampaignController::class, 'send'])->name('email-campaigns.send');
+
+    Route::get('email-templates', [AdminEmailTemplateController::class, 'index'])->name('email-templates.index');
+    Route::get('email-templates/{emailTemplate}/edit', [AdminEmailTemplateController::class, 'edit'])->name('email-templates.edit');
+    Route::put('email-templates/{emailTemplate}', [AdminEmailTemplateController::class, 'update'])->name('email-templates.update');
+
     // Monitoring
     Route::get('otps', [AdminOtpController::class, 'index'])->name('otps.index');
     Route::prefix('emails/outbox')->name('emails.outbox.')->group(function () {
@@ -200,9 +227,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
+
+    // User & Customer Management
+    Route::resource('users', AdminUserController::class)->except(['show']);
+    Route::resource('customers', AdminCustomerController::class);
 });
 
 // Direct Shop URL (must be at the end to avoid conflicts)
-// Example: 192.168.1.26/style-store
+// Example: /style-store
 Route::get('/{shop:slug}', [ShopController::class, 'show'])->name('shop.direct')
-    ->where('shop', '^(?!admin|login|logout|register|password|account|shops|cart|checkout|orders|favorites|offers|events|facilities|about|contact|lang|search|api|units|verify-otp|resend-otp|forgot-password|reset-password).*$');
+    ->where('shop', '^(?!admin|login|logout|register|password|account|shops|cart|checkout|orders|favorites|offers|events|facilities|about|contact|lang|search|api|units|verify-otp|resend-otp|forgot-password|reset-password|mall-manager).*$');

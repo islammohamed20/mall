@@ -171,6 +171,49 @@
                 </div>
             </div>
 
+            {{-- Cart Settings Section --}}
+            <div class="border-t border-gray-200 dark:border-secondary-700 pt-6">
+                <h2 class="text-lg font-semibold text-secondary-900 dark:text-secondary-50 mb-4">{{ app()->getLocale() === 'ar' ? 'إعدادات سلة التسوق' : 'Shopping Cart Settings' }}</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <div class="flex items-center gap-2">
+                        <input class="rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-secondary-700 dark:bg-secondary-950" type="checkbox" name="cart_enabled" value="1" @checked(old('cart_enabled', $shop->cart_enabled ?? true)) />
+                        <span class="text-sm text-secondary-700 dark:text-secondary-200">{{ app()->getLocale() === 'ar' ? 'تفعيل السلة' : 'Enable Shopping Cart' }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input class="rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-secondary-700 dark:bg-secondary-950" type="checkbox" name="cart_allow_gift_message" value="1" @checked(old('cart_allow_gift_message', $shop->cart_allow_gift_message ?? true)) />
+                        <span class="text-sm text-secondary-700 dark:text-secondary-200">{{ app()->getLocale() === 'ar' ? 'السماح برسالة هدية' : 'Allow Gift Message' }}</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <div class="flex items-center gap-2">
+                        <input class="rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-secondary-700 dark:bg-secondary-950" type="checkbox" name="cart_allow_coupon" value="1" @checked(old('cart_allow_coupon', $shop->cart_allow_coupon ?? true)) />
+                        <span class="text-sm text-secondary-700 dark:text-secondary-200">{{ app()->getLocale() === 'ar' ? 'السماح باستخدام كوبونات' : 'Allow Coupons' }}</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">{{ app()->getLocale() === 'ar' ? 'الحد الأدنى للطلب' : 'Minimum Order Amount' }}</label>
+                        <input type="number" step="0.01" class="form-input" name="cart_min_order_amount" value="{{ old('cart_min_order_amount', $shop->cart_min_order_amount ?? 0) }}" min="0" />
+                        <p class="text-xs text-secondary-500 mt-1">{{ app()->getLocale() === 'ar' ? '0 = بدون حد أدنى' : '0 = no minimum' }}</p>
+                    </div>
+
+                    <div>
+                        <label class="form-label">{{ app()->getLocale() === 'ar' ? 'الحد الأقصى للعناصر' : 'Maximum Items in Cart' }}</label>
+                        <input type="number" class="form-input" name="cart_max_items" value="{{ old('cart_max_items', $shop->cart_max_items ?? 100) }}" min="1" />
+                        @error('cart_max_items') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label class="form-label">{{ app()->getLocale() === 'ar' ? 'مهلة السلة المهجورة (بالدقائق)' : 'Abandoned Cart Timeout (minutes)' }}</label>
+                    <input type="number" class="form-input" name="cart_abandoned_timeout_minutes" value="{{ old('cart_abandoned_timeout_minutes', $shop->cart_abandoned_timeout_minutes ?? 60) }}" min="5" />
+                    <p class="text-xs text-secondary-500 mt-1">{{ app()->getLocale() === 'ar' ? 'عدد الدقائق قبل حذف السلة المهجورة' : 'Minutes before abandoned cart is deleted' }}</p>
+                </div>
+            </div>
+
             <button class="btn-primary" type="submit">{{ app()->getLocale() === 'ar' ? 'حفظ' : 'Save' }}</button>
         </form>
     </div>

@@ -525,6 +525,58 @@ body.season-theme-ramadan .ramadan-twinkle {
     }
 }
 
+/* Admin Panel Mobile Responsive */
+@media (max-width: 1023px) {
+    /* Ensure full width on mobile */
+    .admin-layout {
+        width: 100% !important;
+        max-width: none !important;
+        padding: 0 !important;
+    }
+    
+    /* Proper spacing for admin content on mobile */
+    .admin-content {
+        padding: 0.5rem !important;
+    }
+    
+    /* Mobile table adjustments */
+    .admin-table {
+        font-size: 0.875rem;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: 0.5rem !important;
+    }
+    
+    /* Mobile form adjustments */
+    .admin-form .form-row {
+        flex-direction: column;
+    }
+    
+    /* Fix mobile sidebar z-index */
+    .mobile-sidebar {
+        z-index: 60 !important;
+    }
+}
+
+@media (max-width: 640px) {
+    /* Extra small screens */
+    .admin-content {
+        padding: 0.375rem !important;
+    }
+    
+    /* Smaller text for very small screens */
+    .admin-table {
+        font-size: 0.75rem;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: 0.375rem !important;
+    }
+}
+
 body.season-theme-ramadan footer {
     background-color: rgba(6, 95, 70, 0.06) !important;
 }
@@ -732,3 +784,174 @@ body.season-theme-valentines header {
         animation: none !important;
     }
 }
+
+/* ═══════════════════════════════════════════════════
+   Enhanced Mobile Responsiveness for Admin Panel
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 1023px) {
+    /* General admin content adjustments */
+    .admin-content {
+        padding: 0.5rem !important;
+    }
+
+    .admin-card {
+        padding: 0.75rem !important;
+        border-radius: 0.5rem;
+        margin: 0 !important;
+    }
+
+    /* Table responsiveness */
+    .admin-table th,
+    .admin-table td {
+        padding: 0.375rem 0.5rem !important;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .admin-table thead th {
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    /* Form improvements */
+    .admin-form .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .admin-form input,
+    .admin-form select,
+    .admin-form textarea {
+        font-size: 0.875rem;
+        padding: 0.5rem;
+        width: 100%;
+        border-radius: 0.375rem;
+    }
+
+    /* Button sizing for touch interfaces */
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        min-height: 44px; /* Touch-friendly */
+        border-radius: 0.5rem;
+    }
+
+    .btn-primary-sm,
+    .btn-secondary-sm,
+    .btn-danger-sm {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.75rem;
+        min-height: 36px;
+        border-radius: 0.375rem;
+    }
+
+    /* Table overflow with better scrolling */
+    .admin-card .overflow-x-auto {
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .admin-card .overflow-x-auto::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .admin-card .overflow-x-auto::-webkit-scrollbar-track {
+        background: #f3f4f6;
+    }
+
+    .admin-card .overflow-x-auto::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 2px;
+    }
+
+    /* Stack form elements */
+    .form-row {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+
+    /* Badge responsiveness */
+    .badge {
+        font-size: 0.625rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 9999px;
+        white-space: nowrap;
+    }
+
+    /* Header text scaling */
+    h1 {
+        font-size: 1.5rem !important;
+        line-height: 1.25 !important;
+    }
+
+    h2 {
+        font-size: 1.25rem !important;
+        line-height: 1.375 !important;
+    }
+
+    h3 {
+        font-size: 1.125rem !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Pagination improvements */
+    .pagination {
+        justify-content: center;
+        font-size: 0.875rem;
+        gap: 0.25rem;
+    }
+
+    /* Stats cards responsiveness */
+    .stats-card {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .stats-card h3 {
+        font-size: 1.5rem !important;
+    }
+
+    .stats-card p {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 640px) {
+    /* Extra small screens adjustments */
+    .admin-table th,
+    .admin-table td {
+        padding: 0.25rem 0.375rem !important;
+        font-size: 0.7rem;
+    }
+
+    h1 {
+        font-size: 1.25rem !important;
+    }
+
+    .admin-card {
+        padding: 0.5rem !important;
+    }
+
+    /* Make buttons full width on very small screens */
+    .btn-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .btn-group .btn-primary,
+    .btn-group .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Dark mode scrollbar improvements */
+.dark .admin-card .overflow-x-auto::-webkit-scrollbar-track {
+    background: #374151;
+}
+
+.dark .admin-card .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #6b7280;
+}
+

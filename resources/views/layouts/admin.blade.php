@@ -47,6 +47,15 @@
                 applyTheme(resolveTheme());
             })();
         </script>
+        <script>
+            (function () {
+                try {
+                    if (localStorage.getItem('cookie:consent')) {
+                        document.documentElement.classList.add('cookie-consent-accepted');
+                    }
+                } catch (e) {}
+            })();
+        </script>
         <title>{{ $title ?? 'Admin' }} - {{ app()->getLocale() === 'ar' ? config('mall.name.ar') : config('mall.name.en') }}</title>
         @php
             $faviconPath = \App\Models\Setting::getValue('mall_favicon');
@@ -59,282 +68,36 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     </head>
-    <body class="min-h-screen bg-gray-100 text-secondary-900 dark:bg-secondary-950 dark:text-secondary-100 {{ $seasonThemeBodyClass ?? '' }}">
-        <div class="min-h-screen flex" x-data="{ sidebarOpen: false }" x-init="$watch('sidebarOpen', value => document.body.classList.toggle('overflow-hidden', value))">
-            <aside class="w-64 bg-white border-e border-gray-200 hidden lg:block dark:bg-secondary-950 dark:border-secondary-800">
-                <div class="px-6 py-5 border-b border-gray-200 dark:border-secondary-800">
-                    <div class="text-lg font-bold gradient-text">{{ app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Admin Panel' }}</div>
-                    <div class="text-sm text-secondary-600 dark:text-secondary-300">{{ app()->getLocale() === 'ar' ? config('mall.name.ar') : config('mall.name.en') }}</div>
-                </div>
-                <nav class="p-4 space-y-1">
-                    <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'الرئيسية' : 'Dashboard' }}
-                    </a>
-                    
-                    {{-- Reports Section --}}
-                    <div class="pt-3 pb-1">
-                        <p class="px-3 text-xs font-semibold text-secondary-400 uppercase tracking-wider">{{ app()->getLocale() === 'ar' ? 'التقارير' : 'Reports' }}</p>
-                    </div>
-                    <a href="{{ route('admin.reports.dashboard') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.reports.*') ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 font-semibold' : '' }}">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                        {{ app()->getLocale() === 'ar' ? 'التقارير والتحليلات' : 'Reports & Analytics' }}
-                    </a>
-                    <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.orders.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                        </svg>
-                        {{ app()->getLocale() === 'ar' ? 'الطلبات' : 'Orders' }}
-                    </a>
-                    
-                    {{-- Content Section --}}
-                    <div class="pt-3 pb-1">
-                        <p class="px-3 text-xs font-semibold text-secondary-400 uppercase tracking-wider">{{ app()->getLocale() === 'ar' ? 'المحتوى' : 'Content' }}</p>
-                    </div>
-                    <a href="{{ route('admin.shop-categories.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.shop-categories.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'تصنيفات المحلات' : 'Shop Categories' }}
-                    </a>
-                    <a href="{{ route('admin.product-attributes.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.product-attributes.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'خصائص المنتجات' : 'Product Attributes' }}
-                    </a>
-                    <a href="{{ route('admin.shops.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.shops.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'المحلات' : 'Shops' }}
-                    </a>
-                    <a href="{{ route('admin.offers.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.offers.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'العروض' : 'Offers' }}
-                    </a>
-                    <a href="{{ route('admin.events.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.events.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'الفعاليات' : 'Events' }}
-                    </a>
-                    <a href="{{ route('admin.sliders.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.sliders.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'السلايدر' : 'Sliders' }}
-                    </a>
-                    <a href="{{ route('admin.floors.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.floors.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'الأدوار' : 'Floors' }}
-                    </a>
-                    <a href="{{ route('admin.facilities.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.facilities.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'المرافق والخدمات' : 'Facilities' }}
-                    </a>
-                    <a href="{{ route('admin.payment-methods.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.payment-methods.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'طرق الدفع' : 'Payment Methods' }}
-                    </a>
-                    <a href="{{ route('admin.pages.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.pages.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'الصفحات' : 'Pages' }}
-                    </a>
-                    <a href="{{ route('admin.units.index') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.units.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21m-3.75 3H21"/></svg>
-                        {{ app()->getLocale() === 'ar' ? 'الوحدات المعروضة' : 'Units for Sale/Rent' }}
-                    </a>
-                    <a href="{{ route('admin.facebook-posts.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.facebook-posts.index') || request()->routeIs('admin.facebook-posts.approve') || request()->routeIs('admin.facebook-posts.reject') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'منشورات فيسبوك (الواردة)' : 'Facebook Posts (Incoming)' }}
-                    </a>
-                    <a href="{{ route('admin.facebook-posts.outgoing.index') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.facebook-posts.outgoing.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-semibold' : '' }}">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                        </svg>
-                        {{ app()->getLocale() === 'ar' ? 'النشر على فيسبوك' : 'Publish to Facebook' }}
-                    </a>
-                    
-                    {{-- Settings Section --}}
-                    <div class="pt-3 pb-1">
-                        <p class="px-3 text-xs font-semibold text-secondary-400 uppercase tracking-wider">{{ app()->getLocale() === 'ar' ? 'الإعدادات' : 'Settings' }}</p>
-                    </div>
-                    <a href="{{ route('admin.settings.edit') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.settings.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'إعدادات الموقع' : 'Site Settings' }}
-                    </a>
-                    <a href="{{ route('admin.themes.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.themes.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'ثيمات المناسبات' : 'Seasonal Themes' }}
-                    </a>
-                    <a href="{{ route('admin.email.edit') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.email.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                        {{ app()->getLocale() === 'ar' ? 'البريد الإلكتروني' : 'Email Settings' }}
-                    </a>
-                    <a href="{{ route('admin.emails.outbox.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.emails.outbox.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'Outbox البريد' : 'Email Outbox' }}
-                    </a>
-                    <a href="{{ route('admin.otps.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.otps.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'رموز التحقق (OTPs)' : 'OTPs' }}
-                    </a>
-                    <a href="{{ route('admin.messages.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.messages.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                        {{ app()->getLocale() === 'ar' ? 'الرسائل' : 'Messages' }}
-                    </a>
-                </nav>
-            </aside>
+    <body class="min-h-screen bg-gray-50 text-secondary-900 dark:bg-secondary-950 dark:text-secondary-100 {{ $seasonThemeBodyClass ?? '' }}">
+        <div class="h-screen flex overflow-hidden" x-data="{ sidebarOpen: false }" x-init="$watch('sidebarOpen', value => { document.body.classList.toggle('overflow-hidden', value); if (window.innerWidth < 1024 && value) { document.documentElement.style.overflow = 'hidden'; } else { document.documentElement.style.overflow = ''; } })">
+            {{-- Desktop Sidebar --}}
+            @include('layouts.partials.admin-sidebar')
 
-            <div class="flex-1 flex flex-col">
-                <header class="bg-white border-b border-gray-200 dark:bg-secondary-950 dark:border-secondary-800">
-                    <div class="px-4 lg:px-8 h-16 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <button type="button" class="lg:hidden px-3 py-2 rounded-lg border border-gray-200 dark:border-secondary-700" @click="sidebarOpen = !sidebarOpen">
-                                {{ app()->getLocale() === 'ar' ? 'القائمة' : 'Menu' }}
-                            </button>
-                            <div class="text-sm text-secondary-700 dark:text-secondary-200">
-                                {{ auth()->user()?->name }}
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <button
-                                type="button"
-                                class="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 dark:border-secondary-700 dark:hover:bg-secondary-900"
-                                x-data="{ dark: document.documentElement.classList.contains('dark') }"
-                                x-init="window.addEventListener('theme-changed', e => dark = e.detail.dark)"
-                                @click="dark = !dark; window.__setTheme(dark ? 'dark' : 'light')"
-                            >
-                                <span class="sr-only">{{ app()->getLocale() === 'ar' ? 'تبديل الثيم' : 'Toggle theme' }}</span>
-                                <svg x-show="!dark" x-cloak xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25M12 18.75V21M4.219 4.219l1.591 1.591M18.19 18.19l1.591 1.591M3 12h2.25M18.75 12H21M4.219 19.781l1.591-1.591M18.19 5.81l1.591-1.591M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <svg x-show="dark" x-cloak xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                                </svg>
-                            </button>
+            <div class="flex-1 flex flex-col min-h-0">
+                {{-- Header --}}
+                @include('layouts.partials.admin-header')
 
-                            <button
-                                type="button"
-                                class="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 dark:border-secondary-700 dark:hover:bg-secondary-900"
-                                title="{{ app()->getLocale() === 'ar'
-                                    ? 'اختصارات لوحة التحكم:\nCtrl/⌘ + S: حفظ\nCtrl/⌘ + Enter: تنفيذ/حفظ\nCtrl/⌘ + Shift + D: مسح الحقول\nCtrl/⌘ + Shift + X: مسح الحقول (بديل)\nCtrl/⌘ + Shift + T: تبديل الثيم\nEsc: إغلاق القائمة'
-                                    : 'Admin shortcuts:\nCtrl/⌘ + S: Save\nCtrl/⌘ + Enter: Submit\nCtrl/⌘ + Shift + D: Clear fields\nCtrl/⌘ + Shift + X: Clear fields (alt)\nCtrl/⌘ + Shift + T: Toggle theme\nEsc: Close menu' }}"
-                                onclick="alert(this.title)"
-                            >
-                                <span class="sr-only">{{ app()->getLocale() === 'ar' ? 'الاختصارات' : 'Shortcuts' }}</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm9.75-4.5a.75.75 0 0 0-.75.75v.008a.75.75 0 0 0 1.5 0V8.25a.75.75 0 0 0-.75-.75Zm0 3a.75.75 0 0 0-.75.75v5.25a.75.75 0 0 0 1.5 0v-5.25a.75.75 0 0 0-.75-.75Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                            <a class="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 dark:border-secondary-700 dark:hover:bg-secondary-900" href="{{ route('home') }}">
-                                {{ app()->getLocale() === 'ar' ? 'الموقع' : 'Website' }}
-                            </a>
-                            <a class="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 dark:border-secondary-700 dark:hover:bg-secondary-900" href="{{ route('lang.switch', app()->getLocale() === 'ar' ? 'en' : 'ar') }}">
-                                {{ app()->getLocale() === 'ar' ? 'English' : 'العربية' }}
-                            </a>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button class="px-3 py-2 rounded-lg bg-secondary-900 text-white hover:bg-secondary-800" type="submit">
-                                    {{ app()->getLocale() === 'ar' ? 'خروج' : 'Logout' }}
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </header>
-
-                <div class="lg:hidden" x-show="sidebarOpen" x-cloak>
-                    <div class="fixed inset-0 bg-black/40" @click="sidebarOpen = false"></div>
-                    <div class="fixed inset-y-0 start-0 w-72 bg-white shadow-lg dark:bg-secondary-950 flex flex-col h-full">
-                        <div class="px-6 py-5 border-b border-gray-200 dark:border-secondary-800 flex items-center justify-between">
-                            <div>
-                                <div class="text-lg font-bold gradient-text">{{ app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Admin Panel' }}</div>
-                                <div class="text-sm text-secondary-600 dark:text-secondary-300">{{ app()->getLocale() === 'ar' ? config('mall.name.ar') : config('mall.name.en') }}</div>
-                            </div>
-                            <button class="px-3 py-2 rounded-lg border border-gray-200 dark:border-secondary-700" type="button" @click="sidebarOpen = false">
-                                {{ app()->getLocale() === 'ar' ? 'إغلاق' : 'Close' }}
-                            </button>
-                        </div>
-                        <nav class="p-4 space-y-1 flex-1 min-h-0 overflow-y-auto overscroll-contain">
-                            <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'الرئيسية' : 'Dashboard' }}
-                            </a>
-
-                            {{-- Reports --}}
-                            <div class="pt-3 pb-1"><p class="px-3 text-xs font-semibold text-secondary-400 uppercase tracking-wider">{{ app()->getLocale() === 'ar' ? 'التقارير' : 'Reports' }}</p></div>
-                            <a href="{{ route('admin.reports.dashboard') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.reports.*') ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 font-semibold' : '' }}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                                {{ app()->getLocale() === 'ar' ? 'التقارير والتحليلات' : 'Reports & Analytics' }}
-                            </a>
-                            <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.orders.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                                {{ app()->getLocale() === 'ar' ? 'الطلبات' : 'Orders' }}
-                            </a>
-
-                            {{-- Content --}}
-                            <div class="pt-3 pb-1"><p class="px-3 text-xs font-semibold text-secondary-400 uppercase tracking-wider">{{ app()->getLocale() === 'ar' ? 'المحتوى' : 'Content' }}</p></div>
-                            <a href="{{ route('admin.shop-categories.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.shop-categories.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'تصنيفات المحلات' : 'Shop Categories' }}
-                            </a>
-                            <a href="{{ route('admin.product-attributes.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.product-attributes.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'خصائص المنتجات' : 'Product Attributes' }}
-                            </a>
-                            <a href="{{ route('admin.shops.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.shops.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'المحلات' : 'Shops' }}
-                            </a>
-                            <a href="{{ route('admin.offers.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.offers.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'العروض' : 'Offers' }}
-                            </a>
-                            <a href="{{ route('admin.events.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.events.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'الفعاليات' : 'Events' }}
-                            </a>
-                            <a href="{{ route('admin.sliders.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.sliders.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'السلايدر' : 'Sliders' }}
-                            </a>
-                            <a href="{{ route('admin.floors.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.floors.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'الأدوار' : 'Floors' }}
-                            </a>
-                            <a href="{{ route('admin.facilities.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.facilities.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'المرافق والخدمات' : 'Facilities' }}
-                            </a>
-                            <a href="{{ route('admin.payment-methods.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.payment-methods.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'طرق الدفع' : 'Payment Methods' }}
-                            </a>
-                            <a href="{{ route('admin.pages.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.pages.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'الصفحات' : 'Pages' }}
-                            </a>
-                            <a href="{{ route('admin.units.index') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.units.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21m-3.75 3H21"/></svg>
-                                {{ app()->getLocale() === 'ar' ? 'الوحدات المعروضة' : 'Units for Sale/Rent' }}
-                            </a>
-                            <a href="{{ route('admin.facebook-posts.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.facebook-posts.index') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'منشورات فيسبوك (الواردة)' : 'Facebook Posts (Incoming)' }}
-                            </a>
-                            <a href="{{ route('admin.facebook-posts.outgoing.index') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.facebook-posts.outgoing.*') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-semibold' : '' }}">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                                {{ app()->getLocale() === 'ar' ? 'النشر على فيسبوك' : 'Publish to Facebook' }}
-                            </a>
-
-                            {{-- Settings --}}
-                            <div class="pt-3 pb-1"><p class="px-3 text-xs font-semibold text-secondary-400 uppercase tracking-wider">{{ app()->getLocale() === 'ar' ? 'الإعدادات' : 'Settings' }}</p></div>
-                            <a href="{{ route('admin.settings.edit') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.settings.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'إعدادات الموقع' : 'Site Settings' }}
-                            </a>
-                            <a href="{{ route('admin.themes.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.themes.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'ثيمات المناسبات' : 'Seasonal Themes' }}
-                            </a>
-                            <a href="{{ route('admin.email.edit') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.email.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                                {{ app()->getLocale() === 'ar' ? 'البريد الإلكتروني' : 'Email Settings' }}
-                            </a>
-                            <a href="{{ route('admin.emails.outbox.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.emails.outbox.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'Outbox البريد' : 'Email Outbox' }}
-                            </a>
-                            <a href="{{ route('admin.otps.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.otps.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'رموز التحقق (OTPs)' : 'OTPs' }}
-                            </a>
-                            <a href="{{ route('admin.messages.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-secondary-900 {{ request()->routeIs('admin.messages.*') ? 'bg-gray-100 dark:bg-secondary-900 font-semibold' : '' }}">
-                                {{ app()->getLocale() === 'ar' ? 'الرسائل' : 'Messages' }}
-                            </a>
-                        </nav>
-                    </div>
-                </div>
-
-                @include('partials.flash')
+                {{-- Mobile Sidebar --}}
+                @include('layouts.partials.admin-mobile-sidebar')
 
                 @php
-                    $popupsEnabled = \App\Models\Setting::getValue('admin_popup_enabled') !== '0';
-                    $toastItems = collect();
-
-                    if ($popupsEnabled && \Illuminate\Support\Facades\Schema::hasTable('admin_notifications')) {
-                        $toastItems = \App\Models\AdminNotification::query()
-                            ->whereNull('read_at')
-                            ->latest('id')
-                            ->limit(3)
-                            ->get()
+                    $popupsEnabled = true; // Enable by default or control via settings
+                    $toastItems = collect([]);
+                    if (session('status')) {
+                        // handled in init
+                    }
+                    
+                    // Add other notifications if needed
+                    if (auth()->check()) {
+                         $toastItems = auth()->user()->unreadNotifications
+                            ->take(5)
                             ->map(function ($n) {
                                 return [
                                     'id' => $n->id,
-                                    'level' => $n->level ?? 'info',
-                                    'title' => $n->title ?? $n->type,
-                                    'body' => $n->body,
-                                    'read_url' => route('admin.notifications.read', $n),
+                                    'level' => 'info', // or derive from notification type
+                                    'title' => $n->data['title'] ?? 'Notification',
+                                    'body' => $n->data['body'] ?? '',
+                                    'read_url' => route('admin.notifications.read', $n->id),
                                 ];
                             })
                             ->values();
@@ -404,8 +167,10 @@
                     </div>
                 @endif
 
-                <main class="flex-1 p-4 lg:p-8">
-                    @yield('content')
+                <main class="flex-1 min-h-0 overflow-y-auto overscroll-contain p-2 sm:p-4 lg:p-8">
+                    <div class="max-w-full">
+                        @yield('content')
+                    </div>
                 </main>
             </div>
         </div>
@@ -555,6 +320,65 @@
                         return;
                     }
                 }, { capture: true });
+            })();
+        </script>
+        <div id="cookie-consent-banner" class="fixed bottom-4 left-4 right-4 z-50">
+            <div class="max-w-3xl mx-auto rounded-2xl bg-white/95 dark:bg-secondary-900/95 backdrop-blur border border-gray-200 dark:border-secondary-800 shadow-lg p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <div class="text-sm text-secondary-700 dark:text-secondary-200 leading-relaxed">
+                    {{ app()->getLocale() === 'ar'
+                        ? 'نستخدم ملفات الارتباط (Cookies) لتحسين تجربة الاستخدام وتشغيل بعض الخصائص الأساسية مثل تسجيل الدخول والسلة. بالضغط على "موافق" أنت توافق على استخدامها.'
+                        : 'We use cookies to improve your experience and enable essential features like login and cart. By clicking \"Accept\" you consent to their use.' }}
+                </div>
+                <div class="flex items-center gap-2 sm:shrink-0">
+                    <button type="button" id="cookie-consent-accept" class="btn-primary px-4 py-2 text-sm">
+                        {{ app()->getLocale() === 'ar' ? 'موافق' : 'Accept' }}
+                    </button>
+                    <button type="button" id="cookie-consent-close" class="px-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-secondary-700 text-secondary-700 dark:text-secondary-200 hover:bg-gray-50 dark:hover:bg-secondary-800 transition">
+                        {{ app()->getLocale() === 'ar' ? 'إغلاق' : 'Close' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <script>
+            (function () {
+                const key = 'cookie:consent';
+
+                function hasConsent() {
+                    try {
+                        return !!localStorage.getItem(key);
+                    } catch (e) {
+                        return false;
+                    }
+                }
+
+                const banner = document.getElementById('cookie-consent-banner');
+                if (!banner) return;
+
+                if (hasConsent()) {
+                    banner.remove();
+                    return;
+                }
+
+                const acceptBtn = document.getElementById('cookie-consent-accept');
+                const closeBtn = document.getElementById('cookie-consent-close');
+
+                function hide() {
+                    banner.style.display = 'none';
+                }
+
+                if (acceptBtn) {
+                    acceptBtn.addEventListener('click', function () {
+                        try {
+                            localStorage.setItem(key, 'accepted');
+                        } catch (e) {}
+                        document.documentElement.classList.add('cookie-consent-accepted');
+                        hide();
+                    });
+                }
+
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', hide);
+                }
             })();
         </script>
     </body>

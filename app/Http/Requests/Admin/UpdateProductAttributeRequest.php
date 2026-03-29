@@ -14,7 +14,7 @@ class UpdateProductAttributeRequest extends FormRequest
 
     public function rules(): array
     {
-        $attribute = $this->route('productAttribute');
+        $attribute = $this->route('productAttribute') ?? $this->route('product_attribute');
 
         return [
             'name_ar' => ['required', 'string', 'max:255'],
@@ -36,4 +36,3 @@ class UpdateProductAttributeRequest extends FormRequest
         ];
     }
 }
-
