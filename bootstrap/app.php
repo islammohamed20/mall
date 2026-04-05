@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\TrackVisit;
@@ -20,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('facebook:sync-posts')->hourly();
     })
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->append(SecurityHeaders::class);
+
         $middleware->appendToGroup('web', [
             SetLocale::class,
             TrackVisit::class,

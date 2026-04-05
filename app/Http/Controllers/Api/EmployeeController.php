@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -33,6 +34,7 @@ class EmployeeController extends Controller
             'salary' => 'nullable|numeric|min:0',
             'startDate' => 'nullable|date',
             'notes' => 'nullable|string',
+            'image' => 'nullable|string',
         ]);
 
         if (isset($validated['startDate'])) {
@@ -41,6 +43,8 @@ class EmployeeController extends Controller
         }
 
         $employee = Employee::create($validated);
+
+        ActivityLog::record("إضافة موظف جديد", $employee->name, "employee");
 
         return response()->json([
             'data' => $employee,
@@ -71,7 +75,7 @@ class EmployeeController extends Controller
             'salary' => 'nullable|numeric|min:0',
             'startDate' => 'nullable|date',
             'notes' => 'nullable|string',
-            'is_active' => 'sometimes|boolean',
+            'image' => 'nullable|string',
         ]);
 
         if (isset($validated['startDate'])) {
@@ -80,6 +84,8 @@ class EmployeeController extends Controller
         }
 
         $employee->update($validated);
+
+        ActivityLog::record("تحديث بيانات موظف", $employee->name, "employee");
 
         return response()->json([
             'data' => $employee,
@@ -93,6 +99,8 @@ class EmployeeController extends Controller
     public function destroy(Employee $employee)
     {
         $employee->delete();
+
+        ActivityLog::record("حذف موظف", $employee->name, "employee");
 
         return response()->json([
             'message' => 'Employee deleted successfully'

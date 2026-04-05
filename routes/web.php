@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Admin\AdminNotificationController as AdminAdminNotificationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\Admin\UnitController as AdminUnitController;
 use App\Http\Controllers\Admin\PaymentMethodController as AdminPaymentMethodController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
@@ -41,7 +43,10 @@ use App\Http\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\VisitGeoController;
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -64,6 +69,10 @@ Route::post('/_visit/geo', [VisitGeoController::class, 'store'])->name('visit.ge
 Route::get('/shops', [ShopController::class, 'index'])->name('shops.index');
 Route::get('/shops/{shop:slug}', [ShopController::class, 'show'])->name('shops.show');
 Route::get('/shops/{shop:slug}/products/{product:slug}', [ShopController::class, 'product'])->name('shops.products.show');
+
+// Gallery routes
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/gallery/{gallery:slug}', [GalleryController::class, 'show'])->name('gallery.show');
 
 // Cart routes (session-based for guests)
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -129,8 +138,16 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::resource('floors', AdminFloorController::class)->except(['show']);
     Route::resource('facilities', AdminFacilityController::class)->except(['show']);
     Route::resource('payment-methods', AdminPaymentMethodController::class)->except(['show']);
+    
+    // About page routes (defined before pages resource to avoid conflicts)
+    Route::get('pages/about', [AdminPageController::class, 'editAbout'])->name('pages.about.edit');
+    Route::put('pages/about', [AdminPageController::class, 'updateAbout'])->name('pages.about.update');
+    
     Route::resource('pages', AdminPageController::class)->except(['show']);
     Route::resource('units', AdminUnitController::class)->except(['show']);
+    Route::resource('galleries', AdminGalleryController::class);
+    Route::post('galleries/{gallery}/items', [AdminGalleryController::class, 'addItems'])->name('galleries.items.add');
+    Route::delete('galleries/{gallery}/items/{item}', [AdminGalleryController::class, 'deleteItem'])->name('galleries.items.delete');
 
     Route::prefix('shops/{shop}/products')->name('shops.products.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\ShopProductController::class, 'index'])->name('index');

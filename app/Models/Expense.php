@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Employee extends Model
+class Expense extends Model
 {
     use SoftDeletes;
 
@@ -14,22 +14,12 @@ class Employee extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'id',
-        'name',
-        'phone',
-        'position',
-        'salary',
-        'start_date',
-        'notes',
-        'image',
-        'is_active',
+        'id', 'category', 'description', 'amount', 'date', 'invoiceImage', 'notes'
     ];
 
     protected $casts = [
-        'id' => 'string',
-        'salary' => 'float',
-        'start_date' => 'date',
-        'is_active' => 'boolean',
+        'amount' => 'float',
+        'date' => 'date',
     ];
 
     protected static function boot()

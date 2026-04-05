@@ -95,7 +95,7 @@ class TrackVisit
             path: '/',
             domain: null,
             secure: $request->isSecure(),
-            httpOnly: false,
+            httpOnly: true,
             raw: false,
             sameSite: 'Lax'
         ));

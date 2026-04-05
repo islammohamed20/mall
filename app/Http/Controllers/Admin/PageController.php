@@ -96,4 +96,53 @@ class PageController extends Controller
 
         return redirect()->route('admin.pages.index')->with('status', 'Deleted.');
     }
+
+    /**
+     * Edit About page specifically
+     */
+    public function editAbout()
+    {
+        $page = Page::firstOrCreate(
+            ['slug' => 'about'],
+            [
+                'title_ar' => 'عن المول',
+                'title_en' => 'About Mall',
+                'is_active' => true,
+            ]
+        );
+
+        return view('admin.pages.edit-about', compact('page'));
+    }
+
+    /**
+     * Update About page specifically
+     */
+    public function updateAbout(Request $request)
+    {
+        $page = Page::where('slug', 'about')->firstOrFail();
+
+        $data = $request->validate([
+            'title_ar' => ['required', 'string', 'max:255'],
+            'title_en' => ['required', 'string', 'max:255'],
+            'content_ar' => ['nullable', 'string'],
+            'content_en' => ['nullable', 'string'],
+            'meta_title_ar' => ['nullable', 'string', 'max:255'],
+            'meta_title_en' => ['nullable', 'string', 'max:255'],
+            'meta_description_ar' => ['nullable', 'string', 'max:500'],
+            'meta_description_en' => ['nullable', 'string', 'max:500'],
+            'featured_image' => ['nullable', 'image', 'max:4096'],
+            'is_active' => ['nullable', 'boolean'],
+        ]);
+
+        if ($request->hasFile('featured_image')) {
+            if ($page->featured_image) {
+                Storage::disk('public')->delete($page->featured_image);
+            }
+            $data['featured_image'] = $request->file('featured_image')->store('pages', 'public');
+        }
+
+        $page->update($data);
+
+        return redirect()->route('admin.pages.about.edit')->with('status', 'تم حفظ التغييرات بنجاح');
+    }
 }

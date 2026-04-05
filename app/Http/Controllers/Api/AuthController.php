@@ -19,7 +19,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            $token = $user->createToken('api_token');
+            $token = $user->createToken('api_token')->plainTextToken;
             
             return response()->json([
                 'data' => [
@@ -49,7 +49,7 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        $token = $user->createToken('api_token');
+        $token = $user->createToken('api_token')->plainTextToken;
 
         return response()->json([
             'data' => [

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Shop;
 use App\Models\ShopCategory;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -85,6 +86,8 @@ class ShopController extends Controller
 
         $shop = Shop::create($shopData);
 
+        ActivityLog::record("إضافة محل جديد", $shop->name_ar, "shop");
+
         return response()->json([
             'data' => $shop->load(['category', 'floorRelation']),
             'message' => 'Shop created successfully',
@@ -135,6 +138,8 @@ class ShopController extends Controller
 
         $shop->update($shopData);
 
+        ActivityLog::record("تحديث بيانات محل", $shop->name_ar, "shop");
+
         return response()->json([
             'data' => $shop->load(['category', 'floorRelation']),
             'message' => 'Shop updated successfully',
@@ -155,6 +160,8 @@ class ShopController extends Controller
         }
 
         $shop->delete();
+
+        ActivityLog::record("حذف محل", $shop->name_ar, "shop");
 
         return response()->json([
             'message' => 'Shop deleted successfully',
